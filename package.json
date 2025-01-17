@@ -1,0 +1,25 @@
+{
+  "name": "astro-blog",
+  "type": "module",
+  "version": "0.0.1",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro",
+    "watch": "tsc -p tsconfig.watcher.json && node build/watcher/main.js"
+  },
+  "dependencies": {
+    "@iarna/toml": "^2.2.5",
+    "astro": "^5.1.7",
+    "cheerio": "^1.0.0",
+    "chokidar": "^4.0.3",
+    "markdown-it": "^14.1.0",
+    "mustache": "^4.2.0"
+  },
+  "devDependencies": {
+    "@types/markdown-it": "^14.1.2",
+    "@types/mustache": "^4.2.5",
+    "@types/node": "^22.10.7"
+  }
+}
