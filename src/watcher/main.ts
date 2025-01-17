@@ -37,7 +37,7 @@ const complieMarkdown = (markdown: string, baseDir: string) => {
 
 const postTemplate = await fs.readFile(
   'src/templates/post.astro.template',
-  'utf8'
+  'utf8',
 )
 
 /**
