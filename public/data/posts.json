@@ -1,0 +1,9 @@
+[
+  {
+    "title": "Post 1",
+    "date": "2021-07-01",
+    "url": "/posts/post-1",
+    "content": "This is the content of post 1.",
+    "tags": ["tag1", "tag2", "tag3"]
+  }
+]

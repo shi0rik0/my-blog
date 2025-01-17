@@ -1,0 +1,13 @@
+---
+import MiniSearch from 'minisearch'
+import Layout from '../layouts/Layout.astro'
+---
+
+<Layout>
+  <div id="one"></div>
+</Layout>
+
+<script>
+  const url = window.location.href
+  document.getElementById('one').innerHTML = url
+</script>
