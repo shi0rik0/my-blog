@@ -1,0 +1,19 @@
+---
+interface Props {
+  title: string
+  url: string
+  date: string
+  tags: string[]
+}
+const { title, url, date, tags } = Astro.props
+---
+
+<div class="flex gap-4 items-start">
+  <div>{date}</div>
+  <div>
+    <a href={url} class="font-bold">{title}</a>
+    <div class="flex gap-4">
+      {tags.map((tag) => <span>#{tag}</span>)}
+    </div>
+  </div>
+</div>

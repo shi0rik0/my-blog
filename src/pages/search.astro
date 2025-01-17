@@ -1,0 +1,10 @@
+---
+import Layout from '../layouts/Layout.astro'
+import PostSearch from '../components/PostSearch.vue'
+---
+
+<Layout title="文章检索 - Sustie">
+  <div class="my-4">
+    <PostSearch client:load />
+  </div>
+</Layout>

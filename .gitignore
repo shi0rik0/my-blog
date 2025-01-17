@@ -1,3 +1,12 @@
+# ↓ project-specific settings
+# generated files
+public/data/posts.json
+src/pages/posts/
+src/assets/posts.json
+# ↑ project-specific settings
+
+
+# ↓ general settings
 # build output
 dist/
 build/
@@ -23,3 +32,4 @@ pnpm-debug.log*
 
 # jetbrains setting folder
 .idea/
+# ↑ general settings

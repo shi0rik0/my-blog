@@ -1,11 +1,38 @@
 ---
-import Welcome from '../components/Welcome.astro'
 import Layout from '../layouts/Layout.astro'
+import Introduction from '../components/Introduction.md'
+import PostEntry from '../components/PostEntry.astro'
+import posts from '../assets/posts.json'
 
-// Welcome to Astro! Wondering what to do next? Check out the Astro documentation at https://docs.astro.build
-// Don't want to use any of this? Delete everything in this file, the `assets`, `components`, and `layouts` directories, and start fresh.
+const numPosts = 10
 ---
 
-<Layout>
-  <Welcome />
+<Layout title="主页 - Sustie">
+  <div>
+    <Introduction />
+    {
+      posts.slice(0, numPosts).map((i) => {
+        return (
+          <div class="mb-4">
+            <PostEntry
+              title={i.title}
+              url={i.url}
+              date={i.date}
+              tags={i.tags}
+            />
+          </div>
+        )
+      })
+    }
+    <!-- {
+      latestPosts.map((i) => {
+        return (
+          <div class="flex gap-4">
+            <div>{i.date}</div>
+            <a href={i.url}>{i.title}</a>
+          </div>
+        )
+      })
+    } -->
+  </div>
 </Layout>
