@@ -16,6 +16,7 @@ import {
   readPostMetadata,
   compileMarkdown,
 } from './utils.js'
+import { updateAllPosts } from './utils.js'
 
 import { readFile, writeFile } from 'node:fs/promises'
 import path from 'node:path'
@@ -30,11 +31,7 @@ import * as cheerio from 'cheerio'
  */
 const cleansePostContent = (html: string) => {
   const $ = cheerio.load(html)
-  const stringArr: string[] = []
-  $('body').each((_, el) => {
-    stringArr.push($(el).text())
-  })
-  return stringArr.join(' ')
+  return $('body').text()
 }
 
 const mapPosts = async <T>(
@@ -89,3 +86,5 @@ const srcAssetsPostsJson = await generateSrcAssetsPostsJson()
 await writeFile('src/assets/posts.json', srcAssetsPostsJson)
 const publicPostsJson = await generatePublicDataPostsJson()
 await writeFile('public/data/posts.json', publicPostsJson)
+
+await updateAllPosts()
