@@ -10,6 +10,7 @@ export default defineConfig({
   site: 'https://sustie.xyz',
   redirects: {
     '/posts': '/posts/page/1',
+    '/posts/page': '/posts/page/1',
   },
   integrations: [tailwind(), vue()],
 })
