@@ -17,12 +17,8 @@ export const markdownItPlugin = (md: MarkdownIt) => {
       return text.replace(/{/g, '&#123;').replace(/}/g, '&#125;')
     }
   }
-  md.renderer.rules.code_block = (tokens, idx, options, env, self) => {
-    console.log(tokens[idx].content)
-    return '123'
-  }
 
-  // replace standard <img> tag with Astro's <Image> component
+  // replace standard <img> tags with Astro's <Image> components
   const defaultImageRule = md.renderer.rules.image ?? (() => '')
   md.renderer.rules.image = (tokens, idx, options, env, self) => {
     tokens[idx].tag = 'Image'
