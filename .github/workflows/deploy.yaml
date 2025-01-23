@@ -9,6 +9,9 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    # Grant write permissions to GITHUB_TOKEN
+    permissions:
+      contents: write
 
     steps:
       - name: Checkout code
