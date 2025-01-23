@@ -1,0 +1,27 @@
+<!DOCTYPE html><html> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><meta name="generator" content="Astro v5.1.7"><title></title><link rel="stylesheet" href="/_astro/index.BTwGjkCC.css"></head> <body class="bg-[#333] text-[#ddd]"> <h1>Sustie</h1> <div class="flex gap-4"> <a href="/">主页</a> <a href="/posts/">所有文章</a> <a href="/search/">文章检索</a> </div>  <h1>在Python中更优雅地创建抽象类及接口</h1> <p>以前我创建抽象类或者接口的时候，通常会这样写：</p> <pre><code class="language-python">class AbstractClass:
+    def method(self, arg: int) -&gt; int:
+        raise NotImplementedError()
+</code></pre> <p>这么做会带来以下问题：</p> <ol> <li>如果子类没有实现抽象方法，那么在调用该方法的时候才会报错，而不是在创建对象的时候就报错。</li> <li>无法强制子类按照 type hints 的要求来实现方法。</li> </ol> <p>下面就介绍一下如何解决这两个问题。</p> <h2>强制子类实现抽象方法</h2> <p>Python 标准库提供了一个类<code>abc.ABC</code>，如果一个类继承了<code>abc.ABC</code>，那么这个类就是一个抽象类。我们可以使用<code>@abc.abstractmethod</code>装饰器来标记一个方法是抽象方法。抽象类的子类必须实现所有抽象方法，否则在创建对象的时候就会报错。</p> <pre><code class="language-python">from abc import ABC, abstractmethod
+
+class AbstractClass(ABC):
+    @abstractmethod
+    def method(self, arg: int) -&gt; int:
+        ...
+
+class ConcreteClass(AbstractClass):
+    def method(self, arg: int) -&gt; int:
+        return arg
+
+c = ConcreteClass() # 没问题
+a = AbstractClass() # 会得到 TypeError
+</code></pre> <h2>确保子类正确 override 方法</h2> <p>从 Python 3.12 开始，<code>typing</code>模块新增了一个<code>@override</code>装饰器。这个装饰器可以提醒静态检查器这个方法必须覆盖父类的方法，并且方法签名必须一致。</p> <pre><code class="language-python">from typing import override
+
+class AbstractClass:
+    def method(self, arg: int) -&gt; int:
+        raise NotImplementedError()
+
+class ConcreteClass(AbstractClass):
+    @override
+    def method(self, arg: int) -&gt; None: # 会引发静态检查器的警告
+        pass
+</code></pre> <p>如果是 Python 3.11 及以下的版本，可以用<code>typing_extensions</code>模块提供的 backport。</p>  </body></html>

@@ -1,0 +1,54 @@
+<!DOCTYPE html><html> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><meta name="generator" content="Astro v5.1.7"><title></title><link rel="stylesheet" href="/_astro/index.BTwGjkCC.css"></head> <body class="bg-[#333] text-[#ddd]"> <h1>Sustie</h1> <div class="flex gap-4"> <a href="/">主页</a> <a href="/posts/">所有文章</a> <a href="/search/">文章检索</a> </div>  <h1>给VSCode Vue项目配置ESLint和Prettier</h1> <h2>什么是 ESLint 和 Prettier</h2> <p>ESLint 是一个专门针对 JS 程序的 linter，但是它也可以用来格式化 JS 代码。而 Prettier 是一个支持多种语言（包括 JS）的代码 formatter。Linter 和 formatter 的区别在于，formatter 只关注代码格式好不好看，不关心具体逻辑，而 linter 更关注程序逻辑是否有问题。</p> <p>所以说，对于 HTML 和 CSS 代码，只能用 Prettier 来格式化。而对于 JS 代码来说，ESLint 和 Prettier 的功能有重复的部分。比较好的做法是，禁用 ESLint 中与 Prettier 冲突的格式化规则，然后同时使用 ESLint 和 Prettier。</p> <h2>安装并配置 Prettier</h2> <p>在下文中，我们假设项目的目录结构是这样的：</p> <pre><code>.
+├── backend/
+├── frontend/
+│   ├── node_modules/
+│   ├── package.json
+│   ├── package-lock.json
+</code></pre> <p>首先我们要安装 Prettier：</p> <pre><code class="language-sh">npm install -D prettier
+</code></pre> <p>然后在<code>frontend/</code>下面创建一个名为<code>.prettierrc</code>的 Prettier 配置文件。</p> <pre><code class="language-json">&#123;
+  &quot;semi&quot;: false,
+  &quot;singleQuote&quot;: true,
+  &quot;tabWidth&quot;: 2,
+  &quot;trailingComma&quot;: &quot;es5&quot;
+&#125;
+</code></pre> <p>然后就可以用<code>npx</code>运行 Prettier 了：</p> <pre><code class="language-sh">npx prettier --check &quot;**/*.js&quot;
+</code></pre> <h2>安装并配置 ESLint</h2> <p>首先安装依赖：</p> <pre><code class="language-sh">npm install -D eslint eslint-config-prettier eslint-plugin-vue
+</code></pre> <p>其中<code>eslint</code>是 ESLint 本体，<code>eslint-config-prettier</code>是一个配置文件，用来禁用 ESLint 中与 Prettier 冲突的规则，<code>eslint-plugin-vue</code>则用来给 ESLint 添加 Vue 相关的规则。</p> <p>然后在<code>frontend/</code>下面创建名为<code>eslint.config.js</code>的 ESLint 配置文件：</p> <pre><code class="language-js">import js from &quot;@eslint/js&quot;;
+import prettier from &quot;eslint-config-prettier&quot;;
+import pluginVue from &quot;eslint-plugin-vue&quot;;
+
+export default [
+  js.configs.recommended, // 使用推荐的 ESLint JS 配置
+  ...pluginVue.configs[&quot;flat/recommended&quot;], // 使用推荐的 ESLint Vue 配置
+  prettier, // 这个配置会禁用和 Prettier 有冲突的 ESLint 规则
+  &#123;
+    rules: &#123;
+      // 在这里写其他的配置
+      // 参考：https://eslint.org/docs/latest/use/configure/configuration-files
+    &#125;,
+  &#125;,
+];
+</code></pre> <p>接着就可以使用 ESLint 了：</p> <pre><code class="language-sh">npx eslint &quot;**/*.js&quot;
+</code></pre> <h2>配置 VSCode</h2> <p>首先安装以下 VSCode 插件：</p> <ul> <li>dbaeumer.vscode-eslint</li> <li>esbenp.prettier-vscode</li> <li>Vue.volar</li> </ul> <p>然后打开工作区的配置文件<code>.vscode/settings.json</code>，在里面加入以下内容：</p> <pre><code class="language-json">&#123;
+  &quot;editor.formatOnSave&quot;: true,
+  &quot;editor.codeActionsOnSave&quot;: &#123;
+    &quot;source.fixAll.eslint&quot;: &quot;explicit&quot;
+  &#125;,
+
+  &quot;prettier.configPath&quot;: &quot;./frontend/.prettierrc&quot;,
+  &quot;eslint.workingDirectories&quot;: [&quot;./frontend/&quot;],
+
+  &quot;[vue]&quot;: &#123;
+    &quot;editor.defaultFormatter&quot;: &quot;esbenp.prettier-vscode&quot;
+  &#125;,
+  &quot;[javascript]&quot;: &#123;
+    &quot;editor.defaultFormatter&quot;: &quot;esbenp.prettier-vscode&quot;
+  &#125;,
+  &quot;[html]&quot;: &#123;
+    &quot;editor.defaultFormatter&quot;: &quot;esbenp.prettier-vscode&quot;
+  &#125;,
+  &quot;[css]&quot;: &#123;
+    &quot;editor.defaultFormatter&quot;: &quot;esbenp.prettier-vscode&quot;
+  &#125;
+&#125;
+</code></pre>  </body></html>

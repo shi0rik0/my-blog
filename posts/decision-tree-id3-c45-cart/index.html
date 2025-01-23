@@ -1,0 +1,11 @@
+<!DOCTYPE html><html> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><meta name="generator" content="Astro v5.1.7"><title></title><link rel="stylesheet" href="/_astro/index.BTwGjkCC.css"></head> <body class="bg-[#333] text-[#ddd]"> <h1>Sustie</h1> <div class="flex gap-4"> <a href="/">主页</a> <a href="/posts/">所有文章</a> <a href="/search/">文章检索</a> </div>  <h1>3种决策树：ID3、C4.5和CART</h1> <p>假设有以下数据集，记录着一些人的种族、收入、是否有子女以及他们是否有购买保险：</p> <table> <thead> <tr> <th>Race</th> <th>Income</th> <th>Child</th> <th>Insurance</th> </tr> </thead> <tbody> <tr> <td>B</td> <td>H</td> <td>N</td> <td>Y</td> </tr> <tr> <td>W</td> <td>H</td> <td>Y</td> <td>Y</td> </tr> <tr> <td>W</td> <td>L</td> <td>Y</td> <td>Y</td> </tr> <tr> <td>W</td> <td>L</td> <td>Y</td> <td>Y</td> </tr> <tr> <td>B</td> <td>L</td> <td>N</td> <td>N</td> </tr> <tr> <td>B</td> <td>L</td> <td>N</td> <td>N</td> </tr> <tr> <td>B</td> <td>L</td> <td>N</td> <td>N</td> </tr> <tr> <td>W</td> <td>L</td> <td>N</td> <td>N</td> </tr> </tbody> </table> <p>我们希望构造一棵决策树，来根据种族、收入、是否有子女这三个属性来预测一个人是否有购买保险。构造决策树的关键问题在于决定分叉处要根据哪个属性来进行分类。常见的选择方法有 3 种：ID3、C4.5 和 CART。</p> <p>在下文中，将属性集$\&#123;\text&#123;Race&#125;, \text&#123;Income&#125;, \text&#123;Child&#125;\&#125;$记作$D$。将要预测的目标 Insurance 记作$T$。</p> <h2>ID3</h2> <p>ID3 选择属性的方法是：</p> <p>$$
+\argmax_&#123;X\in D&#125; H(T) - H(T|X) = \argmin_&#123;X\in D&#125; H(T|X)
+$$</p> <h2>C4.5</h2> <p>C4.5 选择属性的方法是：</p> <p>$$
+\argmax_&#123;X\in D&#125; \frac&#123;H(T) - H(T|X)&#125;&#123;H(X)&#125;
+$$</p> <h2>CART</h2> <p>CART 选择属性的方法是：</p> <p>$$
+\argmax_&#123;X \in D&#125; G(T) - G(T|X) = \argmin_&#123;X \in D&#125; G(T|X)
+$$</p> <p>其中$G(X)$是 Gini 指数，其定义为：</p> <p>$$
+G(X) = 1- \sum_&#123;x&#125; p^2(x)
+$$</p> <p>例如$G(T) = 1-(\frac&#123;1&#125;&#123;2&#125;)^2-(\frac&#123;1&#125;&#123;2&#125;)^2=\frac&#123;1&#125;&#123;2&#125;$。</p> <p>条件 Gini 指数的定义和条件信息熵类似：</p> <p>$$
+G(X|Y)=\sum_y p(y)G(X|Y=y)
+$$</p>  </body></html>

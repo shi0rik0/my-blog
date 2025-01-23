@@ -1,0 +1,37 @@
+<!DOCTYPE html><html> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><meta name="generator" content="Astro v5.1.7"><title></title><link rel="stylesheet" href="/_astro/index.BTwGjkCC.css"></head> <body class="bg-[#333] text-[#ddd]"> <h1>Sustie</h1> <div class="flex gap-4"> <a href="/">主页</a> <a href="/posts/">所有文章</a> <a href="/search/">文章检索</a> </div>  <h1>关于VSCode的launch.json</h1> <p>VSCode 工作区的<code>.vscode/launch.json</code>文件中存储着调试和运行的配置。</p> <h2>基本结构</h2> <p><code>launch.json</code>的基本结构如下：</p> <pre><code class="language-json">&#123;
+  &quot;version&quot;: &quot;0.2.0&quot;,
+  &quot;configurations&quot;: [
+    &#123;
+      &quot;name&quot;: &quot;foo&quot;,
+      &quot;type&quot;: &quot;debugpy&quot;,
+      &quot;request&quot;: &quot;launch&quot;,
+      &quot;program&quot;: &quot;$&#123;workspaceFolder&#125;/bar.py&quot;
+    &#125;
+    // ...
+  ]
+&#125;
+</code></pre> <p>首先有一个<code>version</code>字段指定配置文件的版本，然后在<code>configurations</code>数组中指定调试或运行的参数。</p> <h2>必须参数</h2> <p>每一个启动项都必须有这 4 个参数：</p> <ol> <li><code>name</code>：显示在 VSCode 界面上的启动项名称。</li> <li><code>type</code>：要使用的 debugger。debugger 都是由插件提供的。</li> <li><code>request</code>：只能是<code>launch</code>或者<code>attach</code>。<code>launch</code>表示调试时由 VSCode 启动一个新的进程，<code>attach</code>则表示让 debugger 连接到现有的进程。一般都是选择<code>launch</code>。</li> <li><code>program</code>：程序的入口文件。</li> </ol> <h2>debugpy 的参数</h2> <p><code>cwd</code>参数可以指定运行脚本时的工作目录，默认值是<code>$&#123;workspaceFolder&#125;</code>。</p> <p><code>justMyCode</code>参数的默认值是<code>true</code>，表示不调试不在当前工作区内的代码（比如标准库、第三方库），建议设置为<code>false</code>。</p> <h2>切换调试和运行模式</h2> <p>在 VSCode 里，调试和运行是共享配置的。按下 F5 会开始调试当前的选中项，按下 Ctrl+F5 则会以运行模式（不启动 debugger）启动当前的选中项。</p> <h2>同时调试多个对象</h2> <p>假设有<code>server.py</code>和<code>client.py</code>两个程序需要同时启动，只需要这么编写<code>.vscode/launch.json</code>即可：</p> <pre><code class="language-json">&#123;
+  &quot;version&quot;: &quot;0.2.0&quot;,
+  &quot;configurations&quot;: [
+    &#123;
+      &quot;name&quot;: &quot;Client&quot;,
+      &quot;type&quot;: &quot;debugpy&quot;,
+      &quot;request&quot;: &quot;launch&quot;,
+      &quot;program&quot;: &quot;$&#123;workspaceFolder&#125;/client.py&quot;
+    &#125;,
+    &#123;
+      &quot;name&quot;: &quot;Server&quot;,
+      &quot;type&quot;: &quot;debugpy&quot;,
+      &quot;request&quot;: &quot;launch&quot;,
+      &quot;program&quot;: &quot;$&#123;workspaceFolder&#125;/server.py&quot;
+    &#125;
+  ],
+  &quot;compounds&quot;: [
+    &#123;
+      &quot;name&quot;: &quot;Server/Client&quot;,
+      &quot;configurations&quot;: [&quot;Server&quot;, &quot;Client&quot;],
+      &quot;stopAll&quot;: true
+    &#125;
+  ]
+&#125;
+</code></pre> <p>接着运行名为<code>Server/Client</code>的启动项即可同时启动<code>Server</code>和<code>Client</code>两个调试任务。启用<code>stopAll</code>属性之后，一旦关闭正在调试的任何一个程序，就会将其他程序也一并关闭。</p>  </body></html>
