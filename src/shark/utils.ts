@@ -1,4 +1,5 @@
-import { readdir, readFile, writeFile, unlink } from 'node:fs/promises'
+import { writeFile, readDir } from './fs/utils.js'
+import { readFile, unlink } from 'node:fs/promises'
 import { statSync, existsSync } from 'node:fs'
 import path from 'node:path'
 import { z } from 'zod'
@@ -35,7 +36,7 @@ const postDir = 'src/posts'
  * @returns All post directories.
  */
 export const listPostDirs = async () => {
-  const dirs = await readdir(postDir, { withFileTypes: true })
+  const dirs = await readDir(postDir)
   return dirs
     .filter((d) => d.isDirectory())
     .map((d) => path.join(postDir, d.name))
@@ -173,9 +174,9 @@ export const updatePost = async (dir: string) => {
 }
 
 export const updateAllPosts = async () => {
-  const files1 = await readdir('src/posts', { withFileTypes: true })
+  const files1 = await readDir('src/posts')
   const posts1 = files1.filter((f) => f.isDirectory()).map((f) => f.name)
-  const files2 = await readdir('src/pages/posts', { withFileTypes: true })
+  const files2 = await readDir('src/pages/posts')
   const posts2 = files2
     .filter((f) => f.isFile() && f.name.endsWith('.astro'))
     .map((f) => f.name.substring(0, f.name.length - 6))

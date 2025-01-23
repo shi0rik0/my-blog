@@ -14,3 +14,22 @@ export const writeFile = async (path: string, data: string) => {
   await fs.mkdir(nodePath.dirname(path), { recursive: true })
   await fs.writeFile(path, data)
 }
+
+/**
+ * Reads the contents of a directory. Will return an empty array if `dir` isn't
+ * a directory.
+ */
+export const readDir = async (dir: string) => {
+  try {
+    const stat = await fs.stat(dir)
+    if (!stat.isDirectory()) {
+      return []
+    }
+  } catch (e) {
+    if (e instanceof Error && 'code' in e && e.code === 'ENOENT') {
+      return []
+    }
+    throw e
+  }
+  return await fs.readdir(dir, { withFileTypes: true })
+}
