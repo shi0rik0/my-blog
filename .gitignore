@@ -1,8 +1,9 @@
 # ↓ project-specific settings
 # generated files
 public/data/posts.json
-src/pages/posts/
 src/assets/posts.json
+src/pages/posts/*
+!src/pages/posts/page/
 # ↑ project-specific settings
 
 

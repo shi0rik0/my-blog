@@ -1,0 +1,49 @@
+---
+import type { GetStaticPaths } from 'astro'
+import posts from '../../../assets/posts.json'
+import Layout from '../../../layouts/Layout.astro'
+import PostEntry from '../../../components/PostEntry.astro'
+import { postsPerPage } from './config'
+
+export const getStaticPaths = (() => {
+  const numPages = Math.ceil(posts.length / postsPerPage)
+  return Array.from({ length: numPages }, (_, i) => {
+    return {
+      params: {
+        index: (i + 1).toString(),
+      },
+      props: {
+        numPages,
+      },
+    }
+  })
+}) satisfies GetStaticPaths
+
+const { index } = Astro.params
+const { numPages } = Astro.props
+const idx = parseInt(index, 10)
+const postsOnPage = posts.slice((idx - 1) * postsPerPage, idx * postsPerPage)
+---
+
+<Layout title={`所有文章 - 第 ${index} 页 - Sustie`}>
+  <div class="my-4">
+    {
+      postsOnPage.map((i) => {
+        return (
+          <div class="mb-4">
+            <PostEntry
+              title={i.title}
+              url={i.url}
+              date={i.date}
+              tags={i.tags}
+            />
+          </div>
+        )
+      })
+    }
+  </div>
+  <div class="flex my-4 gap-8">
+    {idx > 1 && <a href={`/posts/page/${idx - 1}`}>上一页</a>}
+    {idx < numPages && <a href={`/posts/page/${idx + 1}`}>下一页</a>}
+  </div>
+</Layout>
