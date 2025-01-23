@@ -15,10 +15,11 @@ import {
   getPostUrl,
   readPostMetadata,
   compileMarkdown,
+  updateAllPosts,
 } from './utils.js'
-import { updateAllPosts } from './utils.js'
+import { writeFile } from './fs/utils.js'
 
-import { readFile, writeFile } from 'node:fs/promises'
+import { readFile } from 'node:fs/promises'
 import path from 'node:path'
 import * as cheerio from 'cheerio'
 
