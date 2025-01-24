@@ -1,48 +1,57 @@
-# Astro Starter Kit: Basics
+# My Personal Blog
 
-```sh
-npm create astro@latest -- --template basics
+This is the repository for my personal blog. It is built by [Astro](https://astro.build/) and hosted on [GitHub Pages](https://pages.github.com/).
+
+## Features
+
+- **Static**: This blog is completely static.
+- **Math Formula**: This blog uses [KaTeX](https://katex.org/) to render math formulas.
+
+## Architecture
+
+One simple way to set up a blog is to use the [Content API](https://docs.astro.build/en/guides/content-collections/) of Astro, but it's not flexible enough for me, so I wrote a module called `Shark` to generate the blog pages from post files.
+
+The pipeline of the blog generation is as follows:
+
+1. Shark transforms the post files in `src/posts/` into .astro files and related resource files.
+2. Astro transforms the .astro files into website files.
+
+## Format
+
+Each post is a directory in `src/posts/`. The directory name is part of the URL of the post. For example, the post in `src/posts/hello-world/` will be available at `https://your-domain/hello-world`.
+
+Each post consists of the following files:
+
+- `article.md`: The content of the post in Markdown format.
+- `metadata.toml`: The metadata of the post.
+
+Metadata contains the following fields:
+
+- `title`: The title of the post.
+- `created`: The creation date of the post.
+- `updated`: The last update date of the post.
+- `tags`: The tags of the post.
+
+## Build
+
+To build the blog, run the following command:
+
+```bash
+npm run shark-build && npm run build
 ```
 
-[![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/withastro/astro/tree/latest/examples/basics)
-[![Open with CodeSandbox](https://assets.codesandbox.io/github/button-edit-lime.svg)](https://codesandbox.io/p/sandbox/github/withastro/astro/tree/latest/examples/basics)
-[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/withastro/astro?devcontainer_path=.devcontainer/basics/devcontainer.json)
+The generated files will be in the `dist/` directory.
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+## Hot Reload
 
-![just-the-basics](https://github.com/withastro/astro/assets/2244813/a0a5533c-a856-4198-8470-2d67b1d7c554)
+To start the development server with hot reload, run the following commands in two terminals:
 
-## 🚀 Project Structure
-
-Inside of your Astro project, you'll see the following folders and files:
-
-```text
-/
-├── public/
-│   └── favicon.svg
-├── src/
-│   ├── layouts/
-│   │   └── Layout.astro
-│   └── pages/
-│       └── index.astro
-└── package.json
+```bash
+npm run shark-watch
 ```
 
-To learn more about the folder structure of an Astro project, refer to [our guide on project structure](https://docs.astro.build/en/basics/project-structure/).
+and,
 
-## 🧞 Commands
-
-All commands are run from the root of the project, from a terminal:
-
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `npm install`             | Installs dependencies                            |
-| `npm run dev`             | Starts local dev server at `localhost:4321`      |
-| `npm run build`           | Build your production site to `./dist/`          |
-| `npm run preview`         | Preview your build locally, before deploying     |
-| `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `npm run astro -- --help` | Get help using the Astro CLI                     |
-
-## 👀 Want to learn more?
-
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+```bash
+npm run dev
+```
