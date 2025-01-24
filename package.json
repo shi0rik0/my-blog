@@ -8,7 +8,8 @@
     "preview": "astro preview",
     "astro": "astro",
     "shark-watch": "tsc -p tsconfig.shark.json && node build/shark/watch.js",
-    "shark-build": "tsc -p tsconfig.shark.json && node build/shark/build.js"
+    "shark-build": "tsc -p tsconfig.shark.json && node build/shark/build.js",
+    "lemon": "tsc -p tsconfig.lemon.json && node build/lemon/index.js"
   },
   "dependencies": {
     "@astrojs/tailwind": "^5.1.4",

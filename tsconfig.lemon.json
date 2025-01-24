@@ -1,0 +1,9 @@
+{
+  "compilerOptions": {
+    "target": "ESNext",
+    "module": "NodeNext",
+    "moduleResolution": "nodenext",
+    "outDir": "build/lemon"
+  },
+  "include": ["src/lemon/**/*.ts"]
+}
