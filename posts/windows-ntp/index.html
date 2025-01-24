@@ -1,19 +1,29 @@
-<!DOCTYPE html><html> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><meta name="generator" content="Astro v5.1.7"><title></title><link rel="stylesheet" href="/_astro/index.CsOifZER.css"></head> <body class="bg-[#333] text-[#ddd]"> <h1>Sustie</h1> <div class="flex gap-4"> <a href="/">主页</a> <a href="/posts/page/1">所有文章</a> <a href="/search/">文章检索</a> </div>  <h1>Windows NTP指南</h1> <p>本文将介绍如何在 Windows 系统上启动 NTP 服务器，以及如何让 NTP 客户端同步时间。</p> <p>注意：本文中的大部分操作都需要管理员权限。</p> <h2>防火墙配置</h2> <p>默认配置下，Windows 防火墙会阻止所有未经允许的入站连接。因此，我们需要允许 NTP 服务（使用 UDP 123 端口）的入站连接。</p> <pre><code class="language-powershell">New-NetFirewallRule -DisplayName &quot;Allow NTP&quot; -Direction Inbound -Protocol UDP -LocalPort 123 -Action Allow
-</code></pre> <h2>启动 NTP 服务器</h2> <p>默认配置下，Windows 的 NTP 服务（<code>w32time</code>）是禁用服务器功能的，我们需要手动修改注册表，然后重启服务来开启：</p> <pre><code class="language-powershell">Set-ItemProperty -Path &quot;HKLM:\SYSTEM\CurrentControlSet\Services\W32Time\TimeProviders\NtpServer&quot; -Name &quot;Enabled&quot; -Value 1
+<!DOCTYPE html><html> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css" integrity="sha384-zh0CIslj+VczCZtlzBcjt5ppRcsAmDnRem7ESsYwWwg3m/OaJ2l4x7YBZl9Kxxib" crossorigin="anonymous"><meta name="generator" content="Astro v5.1.7"><title></title><link rel="stylesheet" href="/_astro/index.CsOifZER.css"></head> <body class="bg-[#333] text-[#ddd]"> <h1>Sustie</h1> <div class="flex gap-4"> <a href="/">主页</a> <a href="/posts/page/1">所有文章</a> <a href="/search/">文章检索</a> </div>  <h1>Windows NTP指南</h1> <p>本文将介绍如何在 Windows 系统上启动 NTP 服务器，以及如何让 NTP 客户端同步时间。</p> <p>注意：本文中的大部分操作都需要管理员权限。</p> <h2>防火墙配置</h2> <p>默认配置下，Windows 防火墙会阻止所有未经允许的入站连接。因此，我们需要允许 NTP 服务（使用 UDP 123 端口）的入站连接。</p>
+New-NetFirewallRule -DisplayName &quot;Allow NTP&quot; -Direction Inbound -Protocol UDP -LocalPort 123 -Action Allow
+<h2>启动 NTP 服务器</h2> <p>默认配置下，Windows 的 NTP 服务（w32time）是禁用服务器功能的，我们需要手动修改注册表，然后重启服务来开启：</p>
+Set-ItemProperty -Path &quot;HKLM:\SYSTEM\CurrentControlSet\Services\W32Time\TimeProviders\NtpServer&quot; -Name &quot;Enabled&quot; -Value 1
 Restart-Service w32time
-</code></pre> <p>然后运行下面的命令让<code>w23time</code>开机自动启动，并查看其状态：</p> <pre><code class="language-powershell">Set-Service w32time -StartupType Automatic
-Get-Service w32time | Select-Object -Property Name, StartType, Status
-</code></pre> <p>接下来查看<code>w32time</code>的配置：</p> <pre><code class="language-powershell">w32tm /query /configuration
-</code></pre> <p>应该会在输出的<code>[TimeProviders]</code>部分看到类似下面的内容：</p> <pre><code>NtpServer (本地)
-DllName: C:\WINDOWS\system32\w32time.dll (本地)
-Enabled: 1 (本地)
-</code></pre> <h2>向 NTP 服务器同步时间</h2> <p>首先启动<code>w32time</code>服务，并让它开机自动启动：</p> <pre><code class="language-powershell">Start-Service w32time
+<p>然后运行下面的命令让w23time开机自动启动，并查看其状态：</p>
 Set-Service w32time -StartupType Automatic
 Get-Service w32time | Select-Object -Property Name, StartType, Status
-</code></pre> <p>然后运行下面的命令配置 NTP 客户端要向哪个服务器同步时间：</p> <pre><code class="language-powershell">$ntpServer = &quot;127.0.0.1&quot;
+<p>接下来查看w32time的配置：</p>
+w32tm /query /configuration
+<p>应该会在输出的[TimeProviders]部分看到类似下面的内容：</p>
+NtpServer (本地)
+DllName: C:\WINDOWS\system32\w32time.dll (本地)
+Enabled: 1 (本地)
+<h2>向 NTP 服务器同步时间</h2> <p>首先启动w32time服务，并让它开机自动启动：</p>
+Start-Service w32time
+Set-Service w32time -StartupType Automatic
+Get-Service w32time | Select-Object -Property Name, StartType, Status
+<p>然后运行下面的命令配置 NTP 客户端要向哪个服务器同步时间：</p>
+$ntpServer = &quot;127.0.0.1&quot;
 w32tm /config /manualpeerlist:$ntpServer /syncfromflags:manual /reliable:yes /update
-</code></pre> <p>最后运行下面的命令来强制 NTP 客户端立即同步时间：</p> <pre><code class="language-powershell">Set-Date (Get-Date).AddSeconds(-5) # 将本地时间提前5秒
+<p>最后运行下面的命令来强制 NTP 客户端立即同步时间：</p>
+Set-Date (Get-Date).AddSeconds(-5) # 将本地时间提前5秒
 w32tm /resync /force
-</code></pre> <p>这里要将本地时间提前 5 秒是为了确保<code>w32time</code>立即同步时间。经过测试，<code>w32time</code>的逻辑是如果时间相差不多就不会立即同步，所以我们需要故意将本地时间弄得不准，这样才能强制同步。</p> <p>可以通过下面的命令来检验同步结果：</p> <pre><code class="language-powershell">w32tm /stripchart /computer:$ntpServer /samples:5
-</code></pre> <p>所看到的输出应该是类似下面这样的：</p> <pre><code>09:16:23, d:+00.0004502s o:+00.0001461s  [                           *                           ]
-</code></pre> <p>其中<code>o:</code>代表 offset，也就是本地时间和 NTP 服务器时间的差值（当然这是个估计值）。如果这个值较低，那么就说明同步成功了。</p> <h2>关于 Windows NTP 实现的精度</h2> <p>根据 Windows 官方文档，在 Windows 8 之前，Windows 的 NTP 实现并不标准，因此精度很差，只能达到秒的量级。而在 Windows 10 之后，微软改进了 NTP 服务的实现，现在的精度可以达到毫秒级别。具体可以参考以下文档：</p> <ol> <li><a href="https://learn.microsoft.com/en-us/windows-server/networking/windows-time-service/configuring-systems-for-high-accuracy">Configuring systems for high accuracy</a></li> <li><a href="https://learn.microsoft.com/en-us/troubleshoot/windows-server/active-directory/support-boundary-high-accuracy-time">Support boundary for high-accuracy time</a>（这个文档详细描述了达到不同精度的环境要求。）</li> </ol>  </body></html>
+<p>这里要将本地时间提前 5 秒是为了确保w32time立即同步时间。经过测试，w32time的逻辑是如果时间相差不多就不会立即同步，所以我们需要故意将本地时间弄得不准，这样才能强制同步。</p> <p>可以通过下面的命令来检验同步结果：</p>
+w32tm /stripchart /computer:$ntpServer /samples:5
+<p>所看到的输出应该是类似下面这样的：</p>
+09:16:23, d:+00.0004502s o:+00.0001461s  [                           *                           ]
+<p>其中o:代表 offset，也就是本地时间和 NTP 服务器时间的差值（当然这是个估计值）。如果这个值较低，那么就说明同步成功了。</p> <h2>关于 Windows NTP 实现的精度</h2> <p>根据 Windows 官方文档，在 Windows 8 之前，Windows 的 NTP 实现并不标准，因此精度很差，只能达到秒的量级。而在 Windows 10 之后，微软改进了 NTP 服务的实现，现在的精度可以达到毫秒级别。具体可以参考以下文档：</p> <ol> <li><a href="https://learn.microsoft.com/en-us/windows-server/networking/windows-time-service/configuring-systems-for-high-accuracy">Configuring systems for high accuracy</a></li> <li><a href="https://learn.microsoft.com/en-us/troubleshoot/windows-server/active-directory/support-boundary-high-accuracy-time">Support boundary for high-accuracy time</a>（这个文档详细描述了达到不同精度的环境要求。）</li> </ol>  </body></html>

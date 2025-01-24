@@ -1,10 +1,16 @@
-<!DOCTYPE html><html> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><meta name="generator" content="Astro v5.1.7"><title></title><link rel="stylesheet" href="/_astro/index.CsOifZER.css"></head> <body class="bg-[#333] text-[#ddd]"> <h1>Sustie</h1> <div class="flex gap-4"> <a href="/">主页</a> <a href="/posts/page/1">所有文章</a> <a href="/search/">文章检索</a> </div>  <h1>关于SysVinit和systemd</h1> <p>Linux 管理服务的系统有两种：SysVinit 和 systemd。systemd 比 SysVinit 推出得更晚。SysVinit 本质上就是运行一些管理服务的 shell 脚本，轻量灵活但是简陋，而 systemd 则是一个封装得更加复杂的系统。现在大多数 Linux 发行版都已经使用 systemd 了，但是在 Docker 环境下，由于种种原因，大多数情况下还是会使用 SysVinit。因此，同时掌握这两种系统还是很有必要的。</p> <h2>用 systemd 管理服务</h2> <p>systemd 管理服务的命令是<code>systemctl</code>。</p> <p>启动或关闭某个服务：</p> <pre><code class="language-bash">sudo systemctl start $SERVICE
+<!DOCTYPE html><html> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css" integrity="sha384-zh0CIslj+VczCZtlzBcjt5ppRcsAmDnRem7ESsYwWwg3m/OaJ2l4x7YBZl9Kxxib" crossorigin="anonymous"><meta name="generator" content="Astro v5.1.7"><title></title><link rel="stylesheet" href="/_astro/index.CsOifZER.css"></head> <body class="bg-[#333] text-[#ddd]"> <h1>Sustie</h1> <div class="flex gap-4"> <a href="/">主页</a> <a href="/posts/page/1">所有文章</a> <a href="/search/">文章检索</a> </div>  <h1>关于SysVinit和systemd</h1> <p>Linux 管理服务的系统有两种：SysVinit 和 systemd。systemd 比 SysVinit 推出得更晚。SysVinit 本质上就是运行一些管理服务的 shell 脚本，轻量灵活但是简陋，而 systemd 则是一个封装得更加复杂的系统。现在大多数 Linux 发行版都已经使用 systemd 了，但是在 Docker 环境下，由于种种原因，大多数情况下还是会使用 SysVinit。因此，同时掌握这两种系统还是很有必要的。</p> <h2>用 systemd 管理服务</h2> <p>systemd 管理服务的命令是systemctl。</p> <p>启动或关闭某个服务：</p>
+sudo systemctl start $SERVICE
 sudo systemctl stop $SERVICE
-</code></pre> <p>查看某个服务的状态：</p> <pre><code class="language-bash">sudo systemctl status $SERVICE
-</code></pre> <p>管理服务的开机启动：</p> <pre><code class="language-bash">sudo systemctl enable $SERVICE
+<p>查看某个服务的状态：</p>
+sudo systemctl status $SERVICE
+<p>管理服务的开机启动：</p>
+sudo systemctl enable $SERVICE
 sudo systemctl disable $SERVICE
-</code></pre> <h2>用 SysVinit 管理服务</h2> <p>使用<code>service</code>命令启动或关闭某个服务：</p> <pre><code class="language-bash">sudo service $SERVICE start
+<h2>用 SysVinit 管理服务</h2> <p>使用service命令启动或关闭某个服务：</p>
+sudo service $SERVICE start
 sudo service $SERVICE stop
-</code></pre> <p>下面介绍如何在 SysVinit 下管理服务的开机启动。由于 SysVinit 大多是在 Docker 环境下使用，而在 Docker 环境下其实没有所谓开机启动的概念，所以下面的内容可以跳过。</p> <p>使用<code>update-rc.d</code>命令开机启动某个服务：</p> <pre><code class="language-bash">sudo update-rc.d $SERVICE defaults
-</code></pre> <p>关闭开机启动：</p> <pre><code class="language-bash">sudo update-rc.d -f $SERVICE remove
-</code></pre>  </body></html>
+<p>下面介绍如何在 SysVinit 下管理服务的开机启动。由于 SysVinit 大多是在 Docker 环境下使用，而在 Docker 环境下其实没有所谓开机启动的概念，所以下面的内容可以跳过。</p> <p>使用update-rc.d命令开机启动某个服务：</p>
+sudo update-rc.d $SERVICE defaults
+<p>关闭开机启动：</p>
+sudo update-rc.d -f $SERVICE remove
+ </body></html>

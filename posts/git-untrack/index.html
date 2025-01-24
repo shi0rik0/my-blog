@@ -1,4 +1,5 @@
-<!DOCTYPE html><html> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><meta name="generator" content="Astro v5.1.7"><title></title><link rel="stylesheet" href="/_astro/index.CsOifZER.css"></head> <body class="bg-[#333] text-[#ddd]"> <h1>Sustie</h1> <div class="flex gap-4"> <a href="/">主页</a> <a href="/posts/page/1">所有文章</a> <a href="/search/">文章检索</a> </div>  <h1>Git取消追踪文件</h1> <p>Git 可以用<code>.gitignore</code>来忽略一些文件，但是如果是已经被追踪（track）的文件，将其添加到<code>.gitignore</code>并不会取消追踪。这时候就需要用到<code>git rm --cached</code>命令来手动取消追踪。但是有时候，误追踪的文件自己都不知道，有没有办法可以自动找出所有被追踪，但是原本应该被忽略的文件呢？</p> <p>查阅 Git 文档之后，发现有两个命令可以实现这个功能：</p> <ol> <li><code>git ls-files</code>，这个命令可以列出所有被追踪的文件。</li> <li><code>git check-ignore --no-index</code>，这个命令可以用来判断某个文件是否被<code>.gitignore</code>忽略。这里必须加上<code>--no-index</code>参数，否则将不会输出已经被追踪的文件。</li> </ol> <p>结合这两个命令，我们可以写一个脚本来找出所有被追踪，但是原本应该被忽略的文件：</p> <pre><code class="language-python">import subprocess
+<!DOCTYPE html><html> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css" integrity="sha384-zh0CIslj+VczCZtlzBcjt5ppRcsAmDnRem7ESsYwWwg3m/OaJ2l4x7YBZl9Kxxib" crossorigin="anonymous"><meta name="generator" content="Astro v5.1.7"><title></title><link rel="stylesheet" href="/_astro/index.CsOifZER.css"></head> <body class="bg-[#333] text-[#ddd]"> <h1>Sustie</h1> <div class="flex gap-4"> <a href="/">主页</a> <a href="/posts/page/1">所有文章</a> <a href="/search/">文章检索</a> </div>  <h1>Git取消追踪文件</h1> <p>Git 可以用.gitignore来忽略一些文件，但是如果是已经被追踪（track）的文件，将其添加到.gitignore并不会取消追踪。这时候就需要用到git rm --cached命令来手动取消追踪。但是有时候，误追踪的文件自己都不知道，有没有办法可以自动找出所有被追踪，但是原本应该被忽略的文件呢？</p> <p>查阅 Git 文档之后，发现有两个命令可以实现这个功能：</p> <ol> <li>git ls-files，这个命令可以列出所有被追踪的文件。</li> <li>git check-ignore --no-index，这个命令可以用来判断某个文件是否被.gitignore忽略。这里必须加上--no-index参数，否则将不会输出已经被追踪的文件。</li> </ol> <p>结合这两个命令，我们可以写一个脚本来找出所有被追踪，但是原本应该被忽略的文件：</p>
+import subprocess
 
 
 def is_path_ignored(path: str) -&gt; bool:
@@ -15,4 +16,4 @@ tracked_files = subprocess.run(['git', 'ls-files'],
 for file in tracked_files:
     if is_path_ignored(file):
         print(file)
-</code></pre>  </body></html>
+ </body></html>

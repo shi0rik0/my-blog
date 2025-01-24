@@ -1,10 +1,13 @@
-<!DOCTYPE html><html> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><meta name="generator" content="Astro v5.1.7"><title></title><link rel="stylesheet" href="/_astro/index.CsOifZER.css"></head> <body class="bg-[#333] text-[#ddd]"> <h1>Sustie</h1> <div class="flex gap-4"> <a href="/">主页</a> <a href="/posts/page/1">所有文章</a> <a href="/search/">文章检索</a> </div>  <h1>Python的坑：隐式字符串连接</h1> <p>最近写 Python 代码的时候遇到了一个坑：Python 和 C 语言一样，支持隐式字符串连接。所谓隐式字符串连接，就是当两个字符串字面量相邻的时候，会自动连接成一个字符串。比如下面这段代码：</p> <pre><code class="language-python">s = 'hello' 'world'
+<!DOCTYPE html><html> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css" integrity="sha384-zh0CIslj+VczCZtlzBcjt5ppRcsAmDnRem7ESsYwWwg3m/OaJ2l4x7YBZl9Kxxib" crossorigin="anonymous"><meta name="generator" content="Astro v5.1.7"><title></title><link rel="stylesheet" href="/_astro/index.CsOifZER.css"></head> <body class="bg-[#333] text-[#ddd]"> <h1>Sustie</h1> <div class="flex gap-4"> <a href="/">主页</a> <a href="/posts/page/1">所有文章</a> <a href="/search/">文章检索</a> </div>  <h1>Python的坑：隐式字符串连接</h1> <p>最近写 Python 代码的时候遇到了一个坑：Python 和 C 语言一样，支持隐式字符串连接。所谓隐式字符串连接，就是当两个字符串字面量相邻的时候，会自动连接成一个字符串。比如下面这段代码：</p>
+s = 'hello' 'world'
 assert s == 'helloworld'
-</code></pre> <p>利用这个语法可以将长字符串拆分成多行，但是也可能带来问题，比如下面这段代码：</p> <pre><code class="language-python">names = [
+<p>利用这个语法可以将长字符串拆分成多行，但是也可能带来问题，比如下面这段代码：</p>
+names = [
     'Alice'  # 这里漏了一个逗号
     'Bob',
     'Charlie',
 ]
-</code></pre> <p>这段代码的本意是创建一个包含 3 个人名的 list，但是由于缺少逗号，实际上创建的是一个只包含 2 个人名的 list。</p> <p>好在 Pylint 可以检测这个问题，并给出警告 <a href="https://pylint.readthedocs.io/en/latest/user_guide/messages/warning/implicit-str-concat.html">W1404</a>，但是 Pylint 默认不会警告跨行的字符串连接，所以还需要手动在 Pylint 的配置中加入以下内容：</p> <pre><code class="language-ini">[STRING_CONSTANT]
+<p>这段代码的本意是创建一个包含 3 个人名的 list，但是由于缺少逗号，实际上创建的是一个只包含 2 个人名的 list。</p> <p>好在 Pylint 可以检测这个问题，并给出警告 <a href="https://pylint.readthedocs.io/en/latest/user_guide/messages/warning/implicit-str-concat.html">W1404</a>，但是 Pylint 默认不会警告跨行的字符串连接，所以还需要手动在 Pylint 的配置中加入以下内容：</p>
+[STRING_CONSTANT]
 check-str-concat-over-line-jumps = true
-</code></pre>  </body></html>
+ </body></html>

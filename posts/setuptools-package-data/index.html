@@ -1,10 +1,12 @@
-<!DOCTYPE html><html> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><meta name="generator" content="Astro v5.1.7"><title></title><link rel="stylesheet" href="/_astro/index.CsOifZER.css"></head> <body class="bg-[#333] text-[#ddd]"> <h1>Sustie</h1> <div class="flex gap-4"> <a href="/">主页</a> <a href="/posts/page/1">所有文章</a> <a href="/search/">文章检索</a> </div>  <h1>用setuptools打包资源文件</h1> <p>默认情况下，setuptools 只会打包 Python 源代码文件，但有时候我们还需要打包一些资源文件，比如配置文件、模板文件、图片等等。这篇文章将会介绍如何用 setuptools 打包资源文件，并在库执行的时候访问这些文件。</p> <p>我们假设项目的目录结构如下：</p> <pre><code>myproject/
+<!DOCTYPE html><html> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css" integrity="sha384-zh0CIslj+VczCZtlzBcjt5ppRcsAmDnRem7ESsYwWwg3m/OaJ2l4x7YBZl9Kxxib" crossorigin="anonymous"><meta name="generator" content="Astro v5.1.7"><title></title><link rel="stylesheet" href="/_astro/index.CsOifZER.css"></head> <body class="bg-[#333] text-[#ddd]"> <h1>Sustie</h1> <div class="flex gap-4"> <a href="/">主页</a> <a href="/posts/page/1">所有文章</a> <a href="/search/">文章检索</a> </div>  <h1>用setuptools打包资源文件</h1> <p>默认情况下，setuptools 只会打包 Python 源代码文件，但有时候我们还需要打包一些资源文件，比如配置文件、模板文件、图片等等。这篇文章将会介绍如何用 setuptools 打包资源文件，并在库执行的时候访问这些文件。</p> <p>我们假设项目的目录结构如下：</p>
+myproject/
 ├── mypkg/
 │   ├── __init__.py
 │   └── data/
 │       ├── template.txt
 └── setup.py
-</code></pre> <h2>指定要打包的资源文件</h2> <p>要打包 <code>mypkg/data/template.txt</code> ，我们需要在 <code>setup.py</code> 中添加如下代码：</p> <pre><code class="language-python">from setuptools import setup
+<h2>指定要打包的资源文件</h2> <p>要打包 mypkg/data/template.txt ，我们需要在 setup.py 中添加如下代码：</p>
+from setuptools import setup
 
 setup(
     # ...
@@ -12,10 +14,11 @@ setup(
     package_data=&#123;'mypkg': ['data/template.txt']&#125;,
     # ...
 )
-</code></pre> <p><code>package_data</code>参数也可以使用 glob 模式，比如<code>mypkg': ['data/*.txt']</code>。</p> <h2>访问资源文件</h2> <p>可以使用<code>importlib.resources</code>模块来访问资源文件。这个模块是在 Python 3.7 中引入的。</p> <p>使用<code>open_text</code>或者<code>open_binary</code>方法来打开资源文件：</p> <pre><code class="language-python">import mypkg
+<p>package_data参数也可以使用 glob 模式，比如mypkg': ['data/*.txt']。</p> <h2>访问资源文件</h2> <p>可以使用importlib.resources模块来访问资源文件。这个模块是在 Python 3.7 中引入的。</p> <p>使用open_text或者open_binary方法来打开资源文件：</p>
+import mypkg
 import importlib.resources
 
 anchor = mypkg  # 也可以是字符串'mypkg'
 with importlib.resources.open_text(anchor, 'data/template.txt') as f:
     print(f.read())
-</code></pre>  </body></html>
+ </body></html>

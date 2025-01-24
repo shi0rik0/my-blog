@@ -1,4 +1,5 @@
-<!DOCTYPE html><html> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><meta name="generator" content="Astro v5.1.7"><title></title><link rel="stylesheet" href="/_astro/index.CsOifZER.css"></head> <body class="bg-[#333] text-[#ddd]"> <h1>Sustie</h1> <div class="flex gap-4"> <a href="/">主页</a> <a href="/posts/page/1">所有文章</a> <a href="/search/">文章检索</a> </div>  <h1>用Makefile编写生成多个目标文件的规则</h1> <p>假设现在有一个命令 cmd，它会读取文件 a，然后生成文件 x 和 y。</p> <pre><code class="language-c">#include &lt;stdio.h&gt;
+<!DOCTYPE html><html> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css" integrity="sha384-zh0CIslj+VczCZtlzBcjt5ppRcsAmDnRem7ESsYwWwg3m/OaJ2l4x7YBZl9Kxxib" crossorigin="anonymous"><meta name="generator" content="Astro v5.1.7"><title></title><link rel="stylesheet" href="/_astro/index.CsOifZER.css"></head> <body class="bg-[#333] text-[#ddd]"> <h1>Sustie</h1> <div class="flex gap-4"> <a href="/">主页</a> <a href="/posts/page/1">所有文章</a> <a href="/search/">文章检索</a> </div>  <h1>用Makefile编写生成多个目标文件的规则</h1> <p>假设现在有一个命令 cmd，它会读取文件 a，然后生成文件 x 和 y。</p>
+#include &lt;stdio.h&gt;
 #include &lt;stdlib.h&gt;
 
 int main() &#123;
@@ -8,29 +9,36 @@ int main() &#123;
     system(&quot;touch x y&quot;);
     return 0;
 &#125;
-</code></pre> <p>我们可能很自然地会写出这样的 Makefile 规则：</p> <pre><code>all: x y ;
+<p>我们可能很自然地会写出这样的 Makefile 规则：</p>
+all: x y ;
 
 x y: a
     cmd
-</code></pre> <p>乍一看，这似乎没问题，但是当我们并发运行 make 的时候，问题就出现了。假设我们运行<code>make -j2</code>，就会看到以下输出：</p> <pre><code>Reading a.
+<p>乍一看，这似乎没问题，但是当我们并发运行 make 的时候，问题就出现了。假设我们运行make -j2，就会看到以下输出：</p>
+Reading a.
 Reading a.
 Creating x and y.
 Creating x and y.
-</code></pre> <p>也就是说，这个命令被执行了两次！这是因为，当我们编写</p> <pre><code>x y: a
+<p>也就是说，这个命令被执行了两次！这是因为，当我们编写</p>
+x y: a
     cmd
-</code></pre> <p>的时候，实际上等价于</p> <pre><code>x: a
+<p>的时候，实际上等价于</p>
+x: a
     cmd
 
 y: a
     cmd
-</code></pre> <p>这样一来，当多线程运行的时候，make 就会并行地同时生成 x 和 y，导致重复执行。</p> <p>后来，我在<a href="https://stackoverflow.com/questions/2973445/gnu-makefile-rule-generating-a-few-targets-from-a-single-source-file">这个 StackOverflow 问题</a>中找到了解决办法。</p> <h2>GNU Make v4.3 之后的版本</h2> <p>GNU Make v4.3 新增了 grouped explicit targets 的特性，我们只需要在冒号前面加一个&amp;就可以解决问题。</p> <pre><code>x y &amp;: a
+<p>这样一来，当多线程运行的时候，make 就会并行地同时生成 x 和 y，导致重复执行。</p> <p>后来，我在<a href="https://stackoverflow.com/questions/2973445/gnu-makefile-rule-generating-a-few-targets-from-a-single-source-file">这个 StackOverflow 问题</a>中找到了解决办法。</p> <h2>GNU Make v4.3 之后的版本</h2> <p>GNU Make v4.3 新增了 grouped explicit targets 的特性，我们只需要在冒号前面加一个&amp;就可以解决问题。</p>
+x y &amp;: a
     cmd
-</code></pre> <h2>GNU Make v4.3 之前的版本</h2> <p>如果需要考虑到版本兼容性，那么还有一种更通用但是更复杂的解决方法，这种方法利用了一个虚拟的中间文件 xy.intermediate。</p> <pre><code>x y: xy.intermediate ;
+<h2>GNU Make v4.3 之前的版本</h2> <p>如果需要考虑到版本兼容性，那么还有一种更通用但是更复杂的解决方法，这种方法利用了一个虚拟的中间文件 xy.intermediate。</p>
+x y: xy.intermediate ;
 
 .INTERMEDIATE: xy.intermediate
 xy.intermediate: a
 	cmd
-</code></pre> <p>为了让这个方法用起来更加方便，我编写了一个 VSCode snippet：</p> <pre><code class="language-json">&quot;Multiple outputs&quot;: &#123;
+<p>为了让这个方法用起来更加方便，我编写了一个 VSCode snippet：</p>
+&quot;Multiple outputs&quot;: &#123;
     &quot;prefix&quot;: [&quot;multiout&quot;],
     &quot;body&quot;: [&quot;$&#123;1:&lt;TARGETS&gt;&#125;: $&#123;1/[^0-9a-zA-Z_\\-\\.]//g&#125;.intermediate ;&quot;,
                 &quot;&quot;,
@@ -39,4 +47,4 @@ xy.intermediate: a
                 &quot;\t&quot;],
     &quot;description&quot;: &quot;A pattern for recipes with multiple outputs.&quot;
 &#125;
-</code></pre>  </body></html>
+ </body></html>

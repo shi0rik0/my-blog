@@ -1,4 +1,5 @@
-<!DOCTYPE html><html> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><meta name="generator" content="Astro v5.1.7"><title></title><link rel="stylesheet" href="/_astro/index.CsOifZER.css"></head> <body class="bg-[#333] text-[#ddd]"> <h1>Sustie</h1> <div class="flex gap-4"> <a href="/">主页</a> <a href="/posts/page/1">所有文章</a> <a href="/search/">文章检索</a> </div>  <h1>关于Pydantic model字段的别名</h1> <h2>给 model 字段指定别名</h2> <p>Pydantic 的 model 字段名是通过 Python 的类型注解设定的。这样一来当 schema 的字段名不是合法的 Python 变量名的时候就会带来问题。这种情况下可以用 Field 对象的 alias 属性来给字段指定名称。例如下面的例子给<code>family_name</code>这个字段设定了别名<code>family-name</code>。</p> <pre><code class="language-python">from pydantic import BaseModel, Field
+<!DOCTYPE html><html> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css" integrity="sha384-zh0CIslj+VczCZtlzBcjt5ppRcsAmDnRem7ESsYwWwg3m/OaJ2l4x7YBZl9Kxxib" crossorigin="anonymous"><meta name="generator" content="Astro v5.1.7"><title></title><link rel="stylesheet" href="/_astro/index.CsOifZER.css"></head> <body class="bg-[#333] text-[#ddd]"> <h1>Sustie</h1> <div class="flex gap-4"> <a href="/">主页</a> <a href="/posts/page/1">所有文章</a> <a href="/search/">文章检索</a> </div>  <h1>关于Pydantic model字段的别名</h1> <h2>给 model 字段指定别名</h2> <p>Pydantic 的 model 字段名是通过 Python 的类型注解设定的。这样一来当 schema 的字段名不是合法的 Python 变量名的时候就会带来问题。这种情况下可以用 Field 对象的 alias 属性来给字段指定名称。例如下面的例子给family_name这个字段设定了别名family-name。</p>
+from pydantic import BaseModel, Field
 
 
 class Person(BaseModel):
@@ -8,9 +9,12 @@ class Person(BaseModel):
 json_str = '&#123;&quot;family-name&quot;: &quot;Smith&quot;&#125;'
 person = Person.model_validate_json(json_str)
 print(person.model_dump_json())
-</code></pre> <p>上面的代码输出为：</p> <pre><code>&#123;&quot;family_name&quot;:&quot;Smith&quot;&#125;
-</code></pre> <p>可见，默认设置下 Pydantic 输出时会使用本名而非别名。如果希望使用别名，可以设置参数<code>by_alias=True</code>，也就是把代码最后一行改成：</p> <pre><code class="language-python">print(person.model_dump_json(by_alias=True))
-</code></pre> <h2>使用 alias generator 自动生成别名</h2> <p>当一个 model 包含很多字段的时候，逐个手动填写别名就会很麻烦。这时候可以用 alias generator 自动生成别名。一个最简单的 alias generator 就是一个 str-&gt;str 的函数。通过设置 model 的 alias generator 参数就可以自动生成别名：</p> <pre><code class="language-python">from pydantic import BaseModel, ConfigDict
+<p>上面的代码输出为：</p>
+&#123;&quot;family_name&quot;:&quot;Smith&quot;&#125;
+<p>可见，默认设置下 Pydantic 输出时会使用本名而非别名。如果希望使用别名，可以设置参数by_alias=True，也就是把代码最后一行改成：</p>
+print(person.model_dump_json(by_alias=True))
+<h2>使用 alias generator 自动生成别名</h2> <p>当一个 model 包含很多字段的时候，逐个手动填写别名就会很麻烦。这时候可以用 alias generator 自动生成别名。一个最简单的 alias generator 就是一个 str-&gt;str 的函数。通过设置 model 的 alias generator 参数就可以自动生成别名：</p>
+from pydantic import BaseModel, ConfigDict
 
 
 def my_alias_generator(name: str) -&gt; str:
@@ -26,4 +30,4 @@ class Person(BaseModel):
 json_str = '&#123;&quot;family-name&quot;: &quot;Smith&quot;, &quot;given-name&quot;: &quot;Alice&quot;&#125;'
 person = Person.model_validate_json(json_str)
 print(person.model_dump_json(by_alias=True))
-</code></pre> <p><code>pydantic.alias_generators</code>模块中已经提供了一些常见的 alias generator，可以直接使用。</p>  </body></html>
+<p>pydantic.alias_generators模块中已经提供了一些常见的 alias generator，可以直接使用。</p>  </body></html>

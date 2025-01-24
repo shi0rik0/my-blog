@@ -1,9 +1,11 @@
-<!DOCTYPE html><html> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><meta name="generator" content="Astro v5.1.7"><title></title><link rel="stylesheet" href="/_astro/index.CsOifZER.css"></head> <body class="bg-[#333] text-[#ddd]"> <h1>Sustie</h1> <div class="flex gap-4"> <a href="/">主页</a> <a href="/posts/page/1">所有文章</a> <a href="/search/">文章检索</a> </div>  <h1>在pybind11中操作numpy数组</h1> <p>最近需要给 Python 写一个涉及 numpy 数组操作的 C++扩展。我用的是<code>pybind11</code>，用这个库写 Python C++拓展非常方便，并且这个库也提供了对于 numpy API 的封装，可惜<a href="https://pybind11.readthedocs.io/en/stable/advanced/pycpp/numpy.html">官方文档</a>写得比较晦涩，并且也不太全面。我结合官方文档和源代码，总结了一下 numpy 数组的操作方法。</p> <h2>头文件</h2> <p>首先要 include 以下头文件：</p> <pre><code class="language-cpp">#include &lt;pybind11/buffer_info.h&gt;
+<!DOCTYPE html><html> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css" integrity="sha384-zh0CIslj+VczCZtlzBcjt5ppRcsAmDnRem7ESsYwWwg3m/OaJ2l4x7YBZl9Kxxib" crossorigin="anonymous"><meta name="generator" content="Astro v5.1.7"><title></title><link rel="stylesheet" href="/_astro/index.CsOifZER.css"></head> <body class="bg-[#333] text-[#ddd]"> <h1>Sustie</h1> <div class="flex gap-4"> <a href="/">主页</a> <a href="/posts/page/1">所有文章</a> <a href="/search/">文章检索</a> </div>  <h1>在pybind11中操作numpy数组</h1> <p>最近需要给 Python 写一个涉及 numpy 数组操作的 C++扩展。我用的是pybind11，用这个库写 Python C++拓展非常方便，并且这个库也提供了对于 numpy API 的封装，可惜<a href="https://pybind11.readthedocs.io/en/stable/advanced/pycpp/numpy.html">官方文档</a>写得比较晦涩，并且也不太全面。我结合官方文档和源代码，总结了一下 numpy 数组的操作方法。</p> <h2>头文件</h2> <p>首先要 include 以下头文件：</p>
+#include &lt;pybind11/buffer_info.h&gt;
 #include &lt;pybind11/numpy.h&gt;
 #include &lt;pybind11/pybind11.h&gt;
 
 namespace py = pybind11;
-</code></pre> <h2>numpy 数组在 pybind11 中的类型</h2> <p>在<code>pybind11</code>中，numpy 数组的类型是<code>py::array</code>。如果要限定数组的<code>dtype</code>，还可以用<code>py::array_t&lt;T&gt;</code>，其中<code>T</code>是数组元素的类型。例如，如果数组元素是<code>double</code>类型，那么数组的类型就是<code>py::array_t&lt;double&gt;</code>。</p> <h2>获取 numpy 数组的信息</h2> <p>获取 numpy 数组的信息可以使用<code>py::array_t</code>对象的<code>request()</code>方法，这个方法返回一个<code>py::buffer_info</code>对象，这个对象包含了数组的维度、元素类型、元素大小等信息。例如：</p> <pre><code class="language-cpp">void print_array_info(py::array arr) &#123;
+<h2>numpy 数组在 pybind11 中的类型</h2> <p>在pybind11中，numpy 数组的类型是py::array。如果要限定数组的dtype，还可以用py::array_t&lt;T&gt;，其中T是数组元素的类型。例如，如果数组元素是double类型，那么数组的类型就是py::array_t&lt;double&gt;。</p> <h2>获取 numpy 数组的信息</h2> <p>获取 numpy 数组的信息可以使用py::array_t对象的request()方法，这个方法返回一个py::buffer_info对象，这个对象包含了数组的维度、元素类型、元素大小等信息。例如：</p>
+void print_array_info(py::array arr) &#123;
     py::buffer_info info = arr.request();
     std::cout &lt;&lt; &quot;ndim: &quot; &lt;&lt; info.ndim &lt;&lt; std::endl;
     std::cout &lt;&lt; &quot;shape: &quot;;
@@ -14,13 +16,16 @@ namespace py = pybind11;
     std::cout &lt;&lt; &quot;dtype: &quot; &lt;&lt; info.format &lt;&lt; std::endl;
     std::cout &lt;&lt; &quot;itemsize: &quot; &lt;&lt; info.itemsize &lt;&lt; std::endl;
 &#125;
-</code></pre> <p>假如我们这么调用这个函数：</p> <pre><code class="language-python">arr = np.zeros((3, 4), dtype=np.int32)
+<p>假如我们这么调用这个函数：</p>
+arr = np.zeros((3, 4), dtype=np.int32)
 m.print_array_info(arr)
-</code></pre> <p>那么输出结果就是：</p> <pre><code>ndim: 2
+<p>那么输出结果就是：</p>
+ndim: 2
 shape: 3 4
 dtype: l
 itemsize: 4
-</code></pre> <h2>访问、修改数组元素</h2> <p>如果只是访问数组元素，可以使用<code>unchecked()</code>方法，这个方法会返回一个 proxy 对象，通过这个对象可以直接访问数组元素。例如：</p> <pre><code class="language-cpp">void print_2d_array(py::array_t&lt;double&gt; arr) &#123;
+<h2>访问、修改数组元素</h2> <p>如果只是访问数组元素，可以使用unchecked()方法，这个方法会返回一个 proxy 对象，通过这个对象可以直接访问数组元素。例如：</p>
+void print_2d_array(py::array_t&lt;double&gt; arr) &#123;
     if (arr.request().ndim != 2) &#123;
         throw std::runtime_error(&quot;only 2D array is supported&quot;);
     &#125;
@@ -33,7 +38,8 @@ itemsize: 4
         std::cout &lt;&lt; std::endl;
     &#125;
 &#125;
-</code></pre> <p>如果还要修改元素，就需要使用<code>mutable_unchecked()</code>。例如：</p> <pre><code class="language-cpp">void add_one(py::array_t&lt;double&gt; arr) &#123;
+<p>如果还要修改元素，就需要使用mutable_unchecked()。例如：</p>
+void add_one(py::array_t&lt;double&gt; arr) &#123;
     if (arr.request().ndim != 1) &#123;
         throw std::runtime_error(&quot;only 1D array is supported&quot;);
     &#125;
@@ -43,9 +49,11 @@ itemsize: 4
         proxy(i) += 1;
     &#125;
 &#125;
-</code></pre> <p>这里还要注意，<code>py::array_t</code>是一个引用类型，在传参过程中底层数据不会被复制，所以在函数内部修改数组元素会影响到原数组。</p> <p><code>unchecked()</code>和<code>mutable_unchecked()</code>方法都接受一个可选的模板参数，代表数组的维度。指定维度可以让编译器生成更高效的代码。例如：</p> <pre><code class="language-cpp">auto proxy = arr.unchecked&lt;2&gt;();
-</code></pre> <h2>创建、返回 numpy 数组</h2> <p>如果要创建 numpy 数组，使用<code>py::array_t</code>的构造函数即可。其中一个构造函数接受数组的维度，然后返回指定维度的数组。要注意的是，返回值不会被初始化为全 0。这个构造函数的参数相当泛型，可以接受<code>std::vector</code>、<code>std::initializer_list</code>等类型。例如：</p> <pre><code class="language-cpp">py::array_t&lt;double&gt; create_array(int size) &#123;
+<p>这里还要注意，py::array_t是一个引用类型，在传参过程中底层数据不会被复制，所以在函数内部修改数组元素会影响到原数组。</p> <p>unchecked()和mutable_unchecked()方法都接受一个可选的模板参数，代表数组的维度。指定维度可以让编译器生成更高效的代码。例如：</p>
+auto proxy = arr.unchecked&lt;2&gt;();
+<h2>创建、返回 numpy 数组</h2> <p>如果要创建 numpy 数组，使用py::array_t的构造函数即可。其中一个构造函数接受数组的维度，然后返回指定维度的数组。要注意的是，返回值不会被初始化为全 0。这个构造函数的参数相当泛型，可以接受std::vector、std::initializer_list等类型。例如：</p>
+py::array_t&lt;double&gt; create_array(int size) &#123;
     return py::array_t&lt;double&gt;(&#123;size&#125;);
     // 因为是一维数组，所以也可以用 py::array_t&lt;double&gt;(size)
 &#125;
-</code></pre> <p>这个例子也展示了如何返回 numpy 数组，直接 return 即可。因为<code>py::array_t</code>是一个引用类型，所以返回的过程不会发生复制。</p>  </body></html>
+<p>这个例子也展示了如何返回 numpy 数组，直接 return 即可。因为py::array_t是一个引用类型，所以返回的过程不会发生复制。</p>  </body></html>

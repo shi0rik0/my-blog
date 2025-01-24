@@ -1,23 +1,31 @@
-<!DOCTYPE html><html> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><meta name="generator" content="Astro v5.1.7"><title></title><link rel="stylesheet" href="/_astro/index.CsOifZER.css"></head> <body class="bg-[#333] text-[#ddd]"> <h1>Sustie</h1> <div class="flex gap-4"> <a href="/">主页</a> <a href="/posts/page/1">所有文章</a> <a href="/search/">文章检索</a> </div>  <h1>Windows环境下Python UTF-8编码的一些坑</h1> <p>众所周知，Python 3 相比 Python 2 最大的变化之一就是字符串强制使用 UTF-8 编码，但这并不意味着使用 Python 3 就不会有字符编码的问题。在 Python 的世界里，确实一切皆 UTF-8，但是一旦和操作系统交互，就可能会出现问题。</p> <h2>open()的默认编码</h2> <p>在 Unix 系统上，open()函数的默认编码是 UTF-8，但是在 Windows 系统上，open()函数的默认编码是 ANSI（也就是根据 Windows 的地区设置而定，在中文 Windows 上一般是 GBK 编码）。因此，如果在 Windows 系统上要让 open()函数使用 UTF-8 编码，就需要显式指定编码：</p> <pre><code class="language-python">open('file.txt', encoding='utf-8')
-</code></pre> <h2>Python 的 UTF-8 模式</h2> <p>在<a href="https://peps.python.org/pep-0540/">PEP 540</a>中，Python 引入了一个新的“UTF-8 模式”。这个模式可以通过以下两种方式启动：</p> <ol> <li>在环境变量中设置<code>PYTHONUTF8=1</code>。</li> <li>在启动 Python 解释器时，使用<code>-X utf8</code>参数，例如：</li> </ol> <pre><code class="language-bash">python -X utf8 script.py
-</code></pre> <p>启动 UTF-8 模式后，哪怕是在 Windows 系统上，open()函数也会默认使用 UTF-8 编码。</p> <h2>sys.stdout 的编码</h2> <p>本节将讨论 Windows 命令行输出的编码问题，下文中的命令行指的都是 PowerShell。</p> <p>在 Windows 环境下，如果启动 Python 解释器的时候没有将 stdout 重定向，那么 sys.stdout 的编码是 UTF-8，否则就会是 ANSI。下面的例子就证明了这一点：</p> <pre><code class="language-python"># test.py
+<!DOCTYPE html><html> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css" integrity="sha384-zh0CIslj+VczCZtlzBcjt5ppRcsAmDnRem7ESsYwWwg3m/OaJ2l4x7YBZl9Kxxib" crossorigin="anonymous"><meta name="generator" content="Astro v5.1.7"><title></title><link rel="stylesheet" href="/_astro/index.CsOifZER.css"></head> <body class="bg-[#333] text-[#ddd]"> <h1>Sustie</h1> <div class="flex gap-4"> <a href="/">主页</a> <a href="/posts/page/1">所有文章</a> <a href="/search/">文章检索</a> </div>  <h1>Windows环境下Python UTF-8编码的一些坑</h1> <p>众所周知，Python 3 相比 Python 2 最大的变化之一就是字符串强制使用 UTF-8 编码，但这并不意味着使用 Python 3 就不会有字符编码的问题。在 Python 的世界里，确实一切皆 UTF-8，但是一旦和操作系统交互，就可能会出现问题。</p> <h2>open()的默认编码</h2> <p>在 Unix 系统上，open()函数的默认编码是 UTF-8，但是在 Windows 系统上，open()函数的默认编码是 ANSI（也就是根据 Windows 的地区设置而定，在中文 Windows 上一般是 GBK 编码）。因此，如果在 Windows 系统上要让 open()函数使用 UTF-8 编码，就需要显式指定编码：</p>
+open('file.txt', encoding='utf-8')
+<h2>Python 的 UTF-8 模式</h2> <p>在<a href="https://peps.python.org/pep-0540/">PEP 540</a>中，Python 引入了一个新的“UTF-8 模式”。这个模式可以通过以下两种方式启动：</p> <ol> <li>在环境变量中设置PYTHONUTF8=1。</li> <li>在启动 Python 解释器时，使用-X utf8参数，例如：</li> </ol>
+python -X utf8 script.py
+<p>启动 UTF-8 模式后，哪怕是在 Windows 系统上，open()函数也会默认使用 UTF-8 编码。</p> <h2>sys.stdout 的编码</h2> <p>本节将讨论 Windows 命令行输出的编码问题，下文中的命令行指的都是 PowerShell。</p> <p>在 Windows 环境下，如果启动 Python 解释器的时候没有将 stdout 重定向，那么 sys.stdout 的编码是 UTF-8，否则就会是 ANSI。下面的例子就证明了这一点：</p>
+# test.py
 import sys
 print(sys.stdout.encoding)
-</code></pre> <pre><code class="language-powershell">PS&gt; python test.py
+PS&gt; python test.py
 utf-8
 PS&gt; python test.py &gt; out.txt
 PS&gt; gc out.txt
 gbk
-</code></pre> <p>要让 sys.stdout 的编码始终是 UTF-8，要么启用上文所提到的 UTF-8 模式，要么就要在代码中显式指定编码：</p> <pre><code class="language-python">import sys
+<p>要让 sys.stdout 的编码始终是 UTF-8，要么启用上文所提到的 UTF-8 模式，要么就要在代码中显式指定编码：</p>
+import sys
 sys.stdout.reconfigure(encoding='utf-8')
-</code></pre> <p>不过，真正麻烦的地方才刚刚开始。在重定向 stdout 之后，不仅要让 Python 输出 UTF-8，还要让命令行知道输出的是 UTF-8，否则依然会出现乱码。这可以通过指定<code>Out-File</code>命令的<code>-Encoding</code>参数来实现，但这里又有一个奇怪的地方，就是要指定<code>-Encoding</code>为<code>default</code>（也就是 ANSI）才不会乱码。具体的原因我也不太清楚。</p> <pre><code class="language-powershell">python test.py | Out-File -Encoding default out.txt
-</code></pre> <p>如果觉得每次都要这样写很麻烦，也可以通过指定<code>$PSDefaultParameterValues</code>来让<code>Out-File</code>的<code>-Encoding</code>参数默认为<code>default</code>：</p> <pre><code class="language-powershell">$PSDefaultParameterValues['Out-File:Encoding'] = 'default'
+<p>不过，真正麻烦的地方才刚刚开始。在重定向 stdout 之后，不仅要让 Python 输出 UTF-8，还要让命令行知道输出的是 UTF-8，否则依然会出现乱码。这可以通过指定Out-File命令的-Encoding参数来实现，但这里又有一个奇怪的地方，就是要指定-Encoding为default（也就是 ANSI）才不会乱码。具体的原因我也不太清楚。</p>
+python test.py | Out-File -Encoding default out.txt
+<p>如果觉得每次都要这样写很麻烦，也可以通过指定$PSDefaultParameterValues来让Out-File的-Encoding参数默认为default：</p>
+$PSDefaultParameterValues['Out-File:Encoding'] = 'default'
 python test.py | Out-File out.txt
-</code></pre> <p>可以通过编辑<code>$PROFILE</code>文件来让这个设置永久生效：</p> <pre><code class="language-powershell">if (-not (Test-Path $PROFILE)) &#123;
+<p>可以通过编辑$PROFILE文件来让这个设置永久生效：</p>
+if (-not (Test-Path $PROFILE)) &#123;
     New-Item $PROFILE -ItemType File -Force
 &#125;
 Add-Content -Path $PROFILE -Value &quot;`$PSDefaultParameterValues['Out-File:Encoding'] = 'default'&quot;
-</code></pre> <p>这里还有一个坑，就是 PowerShell 7 开始，这个<code>default</code>参数被改名成了<code>ansi</code>，所以要注意版本。不过目前 Windows 11 自带的 PowerShell 还是 5.x 版本。</p> <p>这里提供一个我写的 PowerShell 函数<code>My-Out-File</code>，可以自动根据版本来设置<code>-Encoding</code>：</p> <pre><code class="language-powershell">function My-Out-File &#123;
+<p>这里还有一个坑，就是 PowerShell 7 开始，这个default参数被改名成了ansi，所以要注意版本。不过目前 Windows 11 自带的 PowerShell 还是 5.x 版本。</p> <p>这里提供一个我写的 PowerShell 函数My-Out-File，可以自动根据版本来设置-Encoding：</p>
+function My-Out-File &#123;
     param (
         [string]$Path,
 
@@ -35,4 +43,4 @@ Add-Content -Path $PROFILE -Value &quot;`$PSDefaultParameterValues['Out-File:Enc
         Write-Host &quot;Unsupported PowerShell version: $version&quot;
     &#125;
 &#125;
-</code></pre>  </body></html>
+ </body></html>

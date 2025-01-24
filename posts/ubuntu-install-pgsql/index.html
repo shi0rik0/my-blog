@@ -1,18 +1,27 @@
-<!DOCTYPE html><html> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><meta name="generator" content="Astro v5.1.7"><title></title><link rel="stylesheet" href="/_astro/index.CsOifZER.css"></head> <body class="bg-[#333] text-[#ddd]"> <h1>Sustie</h1> <div class="flex gap-4"> <a href="/">主页</a> <a href="/posts/page/1">所有文章</a> <a href="/search/">文章检索</a> </div>  <h1>Ubuntu安装PostgreSQL的教程</h1> <h2>安装</h2> <p>使用包管理器就可以直接安装 PostgreSQL：</p> <pre><code class="language-sh">sudo apt install postgresql
-</code></pre> <h2>配置</h2> <h3>创建新用户和数据库</h3> <p>默认情况下，PostgreSQL 会创建一个名为<code>postgres</code>的数据库超级用户以及一个同名的 Unix 用户（注意区分数据库用户和 Unix 用户的概念）。<code>postgres</code>数据库用户没有密码，只有在主机上登入<code>postgres</code> Unix 用户之后，才有权限登入<code>postgres</code>数据库用户。<code>psql</code>是 PostgreSQL 的客户端命令行工具。输入下面的命令就可以通过<code>postgres</code>数据库用户来操纵数据库。</p> <pre><code class="language-sh">sudo -u postgres psql
-</code></pre> <p>然后输入以下命令，就可以创建一个名为<code>user1</code>的用户和名为<code>db1</code>的数据库，并赋予<code>user1</code>操纵<code>db1</code>的所有权限。</p> <pre><code class="language-sql">CREATE USER user1 WITH PASSWORD 'your_password';
+<!DOCTYPE html><html> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css" integrity="sha384-zh0CIslj+VczCZtlzBcjt5ppRcsAmDnRem7ESsYwWwg3m/OaJ2l4x7YBZl9Kxxib" crossorigin="anonymous"><meta name="generator" content="Astro v5.1.7"><title></title><link rel="stylesheet" href="/_astro/index.CsOifZER.css"></head> <body class="bg-[#333] text-[#ddd]"> <h1>Sustie</h1> <div class="flex gap-4"> <a href="/">主页</a> <a href="/posts/page/1">所有文章</a> <a href="/search/">文章检索</a> </div>  <h1>Ubuntu安装PostgreSQL的教程</h1> <h2>安装</h2> <p>使用包管理器就可以直接安装 PostgreSQL：</p>
+sudo apt install postgresql
+<h2>配置</h2> <h3>创建新用户和数据库</h3> <p>默认情况下，PostgreSQL 会创建一个名为postgres的数据库超级用户以及一个同名的 Unix 用户（注意区分数据库用户和 Unix 用户的概念）。postgres数据库用户没有密码，只有在主机上登入postgres Unix 用户之后，才有权限登入postgres数据库用户。psql是 PostgreSQL 的客户端命令行工具。输入下面的命令就可以通过postgres数据库用户来操纵数据库。</p>
+sudo -u postgres psql
+<p>然后输入以下命令，就可以创建一个名为user1的用户和名为db1的数据库，并赋予user1操纵db1的所有权限。</p>
+CREATE USER user1 WITH PASSWORD 'your_password';
 CREATE DATABASE db1;
 GRANT ALL PRIVILEGES ON DATABASE db1 TO user1;
 \c db1 postgres
 GRANT ALL ON SCHEMA public TO user1;
 \q
-</code></pre> <p>顺带一提，可以通过<code>pwgen</code>命令生成一个随机的 16 位强密码：</p> <pre><code class="language-sh">sudo apt install pwgen
+<p>顺带一提，可以通过pwgen命令生成一个随机的 16 位强密码：</p>
+sudo apt install pwgen
 pwgen -s 16 1
-</code></pre> <h3>允许外网通过密码连接</h3> <p>默认配置下，PostgreSQL 不允许外网连接通过密码登入数据库。下面介绍如何解除该限制。</p> <p>首先编辑<code>/etc/postgresql/*/main/postgresql.conf</code>（这里的<code>*</code>代表 PostgreSQL 的版本号，下同），加入这一行：</p> <pre><code>listen_addresses = '*'
-</code></pre> <p>然后在<code>/etc/postgresql/*/main/pg_hba.conf</code>中加入这一行：</p> <pre><code>host  all  all  0.0.0.0/0  scram-sha-256
-</code></pre> <p>你可以通过下面的命令快速编辑配置文件：</p> <pre><code class="language-sh">echo &quot;listen_addresses = '*'&quot; | sudo tee -a /etc/postgresql/*/main/postgresql.conf
+<h3>允许外网通过密码连接</h3> <p>默认配置下，PostgreSQL 不允许外网连接通过密码登入数据库。下面介绍如何解除该限制。</p> <p>首先编辑/etc/postgresql/*/main/postgresql.conf（这里的*代表 PostgreSQL 的版本号，下同），加入这一行：</p>
+listen_addresses = '*'
+<p>然后在/etc/postgresql/*/main/pg_hba.conf中加入这一行：</p>
+host  all  all  0.0.0.0/0  scram-sha-256
+<p>你可以通过下面的命令快速编辑配置文件：</p>
+echo &quot;listen_addresses = '*'&quot; | sudo tee -a /etc/postgresql/*/main/postgresql.conf
 echo &quot;host  all  all  0.0.0.0/0  scram-sha-256&quot; | sudo tee -a /etc/postgresql/*/main/pg_hba.conf
-</code></pre> <h3>将数据库文件移动至数据盘中</h3> <p>默认情况下，PostgreSQL 的数据库文件存储在<code>/var/lib/postgresql/*/main/</code>下面。可以通过软链接将数据库文件迁移到别的目录。此外要注意定期备份。</p> <h2>启动</h2> <p>输入以下命令即可启动 PostgreSQL，并设置开机自动启动：</p> <pre><code class="language-sh">sudo service postgresql start
+<h3>将数据库文件移动至数据盘中</h3> <p>默认情况下，PostgreSQL 的数据库文件存储在/var/lib/postgresql/*/main/下面。可以通过软链接将数据库文件迁移到别的目录。此外要注意定期备份。</p> <h2>启动</h2> <p>输入以下命令即可启动 PostgreSQL，并设置开机自动启动：</p>
+sudo service postgresql start
 sudo service postgresql enable
-</code></pre> <p>这里有一个坑，就是<code>postgresql</code>并不是一个真实存在的 service。真正的 PostgreSQL service 名称是带版本号的。<code>postgresql</code>这个 service 只不过是重定向至真正的 service 而已。因此，如果你输入<code>sudo service postgresql status</code>，那么不管 PostgreSQL 有没有成功启动，你看到的状态都会是<code>active (exited)</code>。要想看到真正的运行状态，就要输入：</p> <pre><code class="language-sh">sudo service postgresql* status
-</code></pre>  </body></html>
+<p>这里有一个坑，就是postgresql并不是一个真实存在的 service。真正的 PostgreSQL service 名称是带版本号的。postgresql这个 service 只不过是重定向至真正的 service 而已。因此，如果你输入sudo service postgresql status，那么不管 PostgreSQL 有没有成功启动，你看到的状态都会是active (exited)。要想看到真正的运行状态，就要输入：</p>
+sudo service postgresql* status
+ </body></html>

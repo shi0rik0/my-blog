@@ -1,18 +1,25 @@
-<!DOCTYPE html><html> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><meta name="generator" content="Astro v5.1.7"><title></title><link rel="stylesheet" href="/_astro/index.CsOifZER.css"></head> <body class="bg-[#333] text-[#ddd]"> <h1>Sustie</h1> <div class="flex gap-4"> <a href="/">主页</a> <a href="/posts/page/1">所有文章</a> <a href="/search/">文章检索</a> </div>  <h1>使用Docker搭建PySpark学习环境</h1> <p>首先安装 Docker，然后拉取 Spark 的 Docker 镜像：</p> <pre><code>docker pull apache/spark
-</code></pre> <p>然后创建一个 Docker 容器：</p> <pre><code>docker run -d -u root apache/spark tail -f /dev/null
-</code></pre> <p>（注：这里的-u root 的作用是把容器的默认用户设置成 root，如果不这么做，VSCode 就无法附加到容器上。）</p> <p>接着就可以使用 VSCode 进入容器。进入后在终端里打开 spark-shell：</p> <pre><code>/opt/spark/bin/spark-shell
-</code></pre> <p>打开之后会看到类似下面的输出，里面包含了 Spark 的版本。这里我的版本是 3.5.1。</p> <pre><code>Welcome to
+<!DOCTYPE html><html> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css" integrity="sha384-zh0CIslj+VczCZtlzBcjt5ppRcsAmDnRem7ESsYwWwg3m/OaJ2l4x7YBZl9Kxxib" crossorigin="anonymous"><meta name="generator" content="Astro v5.1.7"><title></title><link rel="stylesheet" href="/_astro/index.CsOifZER.css"></head> <body class="bg-[#333] text-[#ddd]"> <h1>Sustie</h1> <div class="flex gap-4"> <a href="/">主页</a> <a href="/posts/page/1">所有文章</a> <a href="/search/">文章检索</a> </div>  <h1>使用Docker搭建PySpark学习环境</h1> <p>首先安装 Docker，然后拉取 Spark 的 Docker 镜像：</p>
+docker pull apache/spark
+<p>然后创建一个 Docker 容器：</p>
+docker run -d -u root apache/spark tail -f /dev/null
+<p>（注：这里的-u root 的作用是把容器的默认用户设置成 root，如果不这么做，VSCode 就无法附加到容器上。）</p> <p>接着就可以使用 VSCode 进入容器。进入后在终端里打开 spark-shell：</p>
+/opt/spark/bin/spark-shell
+<p>打开之后会看到类似下面的输出，里面包含了 Spark 的版本。这里我的版本是 3.5.1。</p>
+Welcome to
       ____              __
      / __/__  ___ _____/ /__
     _\ \/ _ \/ _ `/ __/  '_/
    /___/ .__/\_,_/_/ /_/\_\   version 3.5.1
       /_/
-</code></pre> <p>然后安装对应版本的 PySpark：</p> <pre><code>pip install pyspark==3.5.1
-</code></pre> <p><strong>注意：这里的 PySpark 版本一定要和 Spark 版本一致。如果不一致，并不会立刻报错，而是会出现有些代码可以运行，有些代码不能运行的情况！</strong></p> <p>安装完 PySpark 之后，就可以用 Python 编写 Spark 程序了。下面是一个简单的例子：</p> <pre><code class="language-python">from pyspark import SparkContext
+<p>然后安装对应版本的 PySpark：</p>
+pip install pyspark==3.5.1
+<p><strong>注意：这里的 PySpark 版本一定要和 Spark 版本一致。如果不一致，并不会立刻报错，而是会出现有些代码可以运行，有些代码不能运行的情况！</strong></p> <p>安装完 PySpark 之后，就可以用 Python 编写 Spark 程序了。下面是一个简单的例子：</p>
+from pyspark import SparkContext
 
 sc = SparkContext.getOrCreate()
 
 rdd = sc.parallelize(['apple', 'apple', 'banana', 'banana', 'banana']).map(lambda x: (x, 1)).reduceByKey(lambda x, y: x + y)
 print(rdd.collect())
-</code></pre> <p>你应该会看到类似下面的输出：</p> <pre><code>[('banana', 3), ('apple', 2)]
-</code></pre>  </body></html>
+<p>你应该会看到类似下面的输出：</p>
+[('banana', 3), ('apple', 2)]
+ </body></html>

@@ -1,20 +1,24 @@
-<!DOCTYPE html><html> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><meta name="generator" content="Astro v5.1.7"><title></title><link rel="stylesheet" href="/_astro/index.CsOifZER.css"></head> <body class="bg-[#333] text-[#ddd]"> <h1>Sustie</h1> <div class="flex gap-4"> <a href="/">主页</a> <a href="/posts/page/1">所有文章</a> <a href="/search/">文章检索</a> </div>  <h1>Vite配置开发/生产环境下的环境变量</h1> <p>在<code>vite.config.js</code>里面有一个<code>envDir</code>的选项，用来指定 Vite 加载的环境变量的路径，默认值是项目的根目录，可以改为其他值：</p> <pre><code class="language-js">export default defineConfig(&#123;
+<!DOCTYPE html><html> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css" integrity="sha384-zh0CIslj+VczCZtlzBcjt5ppRcsAmDnRem7ESsYwWwg3m/OaJ2l4x7YBZl9Kxxib" crossorigin="anonymous"><meta name="generator" content="Astro v5.1.7"><title></title><link rel="stylesheet" href="/_astro/index.CsOifZER.css"></head> <body class="bg-[#333] text-[#ddd]"> <h1>Sustie</h1> <div class="flex gap-4"> <a href="/">主页</a> <a href="/posts/page/1">所有文章</a> <a href="/search/">文章检索</a> </div>  <h1>Vite配置开发/生产环境下的环境变量</h1> <p>在vite.config.js里面有一个envDir的选项，用来指定 Vite 加载的环境变量的路径，默认值是项目的根目录，可以改为其他值：</p>
+export default defineConfig(&#123;
   envDir: &quot;env&quot;,
 &#125;);
-</code></pre> <p>在<code>envDir</code>的目录下新建三个文件：<code>.env</code>、<code>.env.development</code>和<code>.env.production</code>。其中<code>.env</code>是任何模式下都会加载的环境变量，<code>.env.development</code>只会在 development 模式下加载，而<code>.env.production</code>只会在 production 模式下加载。development 和 production 是 Vite 预定义的两个模式，你也可以定义自己的模式，比如 test，这样文件名就是<code>.env.test</code>。</p> <p>development 是 Vite 在开发模式下的默认模式，而 production 是 Vite build 时的默认模式。也可以用<code>--mode</code>参数来手动设定模式。也就是说：</p> <pre><code class="language-bash"># 这两个命令是等价的
+<p>在envDir的目录下新建三个文件：.env、.env.development和.env.production。其中.env是任何模式下都会加载的环境变量，.env.development只会在 development 模式下加载，而.env.production只会在 production 模式下加载。development 和 production 是 Vite 预定义的两个模式，你也可以定义自己的模式，比如 test，这样文件名就是.env.test。</p> <p>development 是 Vite 在开发模式下的默认模式，而 production 是 Vite build 时的默认模式。也可以用--mode参数来手动设定模式。也就是说：</p>
+# 这两个命令是等价的
 vite
 vite --mode development
 
 # 这两个命令是等价的
 vite build
 vite build --mode production
-</code></pre> <p>.env 文件的格式是简单的 key=value 的格式，其中 value 可以加引号，也可以不加，比如：</p> <pre><code>key1=value1
+<p>.env 文件的格式是简单的 key=value 的格式，其中 value 可以加引号，也可以不加，比如：</p>
+key1=value1
 key2=&quot;value2&quot;
-</code></pre> <p>为了防止机密信息泄露，Vite 默认只会导出以<code>VITE_</code>开头的变量。</p> <p>要访问环境变量，可以在 JS 中使用<code>import.meta.env.VITE_XXX</code>来访问。需要注意，<code>import.meta</code>只能在 JS Module 的环境中使用，因此不能直接在 Vue 的 template 中访问，需要在 script 部分中先加载才行：</p> <pre><code class="language-vue">&lt;script setup&gt;
+<p>为了防止机密信息泄露，Vite 默认只会导出以VITE_开头的变量。</p> <p>要访问环境变量，可以在 JS 中使用import.meta.env.VITE_XXX来访问。需要注意，import.meta只能在 JS Module 的环境中使用，因此不能直接在 Vue 的 template 中访问，需要在 script 部分中先加载才行：</p>
+&lt;script setup&gt;
 const XXX = import.meta.env.VITE_XXX;
 &lt;/script&gt;
 
 &lt;template&gt;
   &lt;p&gt;&#123;&#123; XXX &#125;&#125;&lt;/p&gt;
 &lt;/template&gt;
-</code></pre>  </body></html>
+ </body></html>
