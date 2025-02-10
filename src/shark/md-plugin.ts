@@ -55,8 +55,24 @@ export const markdownItPlugin = (md: MarkdownIt) => {
     )
   }
 
+  // The `fence` rule is for code blocks. The naming is a bit confusing.
   const fenceRule: RenderRule = (tokens, idx, options, env, self) => {
     const token = tokens[idx]
+    const langName = token.info.trim()
+
+    if (langName !== '') {
+      const i = token.attrIndex('class')
+      const tmpAttrs = token.attrs ? token.attrs.slice() : []
+
+      if (i < 0) {
+        tmpAttrs.push(['class', options.langPrefix + langName])
+      } else {
+        tmpAttrs[i] = tmpAttrs[i].slice() as [string, string]
+        tmpAttrs[i][1] += ' ' + options.langPrefix + langName
+      }
+
+      token.attrs = tmpAttrs
+    }
 
     return (
       '<pre><code' +
