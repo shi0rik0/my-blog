@@ -4,24 +4,22 @@
 
 这种模型的好处就在于：
 
-1. 不怎么需要修改Chromium的源码。
+1. 不需要大幅修改Chromium的源码。
 2. 保证了浏览器环境的安全性。
 
 ## 如何使用IPC
 
-假设我们希望在渲染进程中打开操作系统的文件选择对话框，并得到用户选择的文件路径。
+假设我们希望在渲染进程中读取本地文件。
 
-首先在主进程的入口`main.ts`中创建一个接口`open-file`：
+首先在主进程的入口`main.ts`中创建一个接口`read-file`：
 
 ```typescript
-import { app, BrowserWindow, ipcMain, dialog } from 'electron'
+import { app, BrowserWindow, ipcMain } from 'electron'
+import { promises as fs } from 'fs'
 
 app.on('ready', () => {
-  ipcMain.handle('open-file', async () => {
-    const { filePaths } = await dialog.showOpenDialog({
-      properties: ['openFile'],
-    })
-    return filePaths[0]
+  ipcMain.handle('read-file', async (event, filePath: string) => {
+    return await fs.readFile(filePath, 'utf-8')
   })
   createWindow()
 })
@@ -29,33 +27,33 @@ app.on('ready', () => {
 
 这里要注意，不能在`createWindow`函数中注册API，因为`createWindow`函数可能会被调用多次。
 
-然后在`preload.ts`中将`open-file`接口暴露给渲染进程：
+然后在`preload.ts`中将`read-file`接口暴露给渲染进程：
 
 ```typescript
 import { contextBridge, ipcRenderer } from 'electron'
 
 contextBridge.exposeInMainWorld('eAPI', {
-  openFile: () => ipcRenderer.invoke('open-file'),
+  readFile: (filePath: string) => ipcRenderer.invoke('read-file', filePath),
 })
 ```
 
 （`preload.ts`是渲染进程在正式运行前执行的一个脚本，它具有更多的权限。这个设计主要是为了保证运行时的安全。）
 
-这样就可以在渲染进程中通过`window.eAPI.openFile()`来调用主进程的`open-file`接口了。例如在Vue组件中：
+这样就可以在渲染进程中通过`window.eAPI.readFile()`来调用主进程的`read-file`接口了。例如在Vue组件中：
 
 ```vue
 <script setup lang="ts">
 import { ref } from 'vue'
 
-const filePath = ref<string>('')
-const openFile = async () => {
-  filePath.value = await window.eAPI.openFile()
+const content = ref<string>('')
+const readFile = async () => {
+  content.value = await window.eAPI.readFile('path/to/file')
 }
 </script>
 
 <template>
-  <button @click="openFile">Open File</button>
-  <p>{{ filePath }}</p>
+  <button @click="readFile">Read File</button>
+  <p>{{ content }}</p>
 </template>
 ```
 
@@ -65,7 +63,7 @@ Electron无法自动推导出IPC接口的类型，只能手动定义。在项目
 
 ```typescript
 interface API {
-  openFile: () => Promise<string>
+  readFile: (filePath: string) => Promise<string>
 }
 
 declare interface Window {
@@ -73,4 +71,4 @@ declare interface Window {
 }
 ```
 
-这样TypeScript就能正确推导出`window.eAPI.openFile()`的类型了。
+这样TypeScript就能正确推导出`window.eAPI.readFile()`的类型了。
