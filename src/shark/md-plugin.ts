@@ -43,14 +43,31 @@ const parseMath = (text: string) => {
 }
 
 export const markdownItPlugin = (md: MarkdownIt) => {
-  // escape special characters
-  const rule1: RenderRule = (tokens, idx, options, env, self) => {
-    const text = tokens[idx].content
-    return escapeHtml(text)
+  const codeInlineRule: RenderRule = (tokens, idx, options, env, self) => {
+    const token = tokens[idx]
+
+    return (
+      '<code' +
+      self.renderAttrs(token) +
+      '>' +
+      escapeHtml(token.content) +
+      '</code>'
+    )
   }
 
-  // on the base of rule1, render math expressions
-  const rule2: RenderRule = (tokens, idx, options, env, self) => {
+  const fenceRule: RenderRule = (tokens, idx, options, env, self) => {
+    const token = tokens[idx]
+
+    return (
+      '<pre><code' +
+      self.renderAttrs(token) +
+      '>' +
+      escapeHtml(token.content) +
+      '</code></pre>'
+    )
+  }
+
+  const textRule: RenderRule = (tokens, idx, options, env, self) => {
     const text = tokens[idx].content
     const parts = parseMath(text)
     return parts
@@ -64,9 +81,9 @@ export const markdownItPlugin = (md: MarkdownIt) => {
       .join('')
   }
 
-  md.renderer.rules.text = rule2
-  md.renderer.rules.fence = rule1
-  md.renderer.rules.code_inline = rule1
+  md.renderer.rules.text = textRule
+  md.renderer.rules.fence = fenceRule
+  md.renderer.rules.code_inline = codeInlineRule
 
   // replace standard <img> tags with Astro's <Image> components
   const defaultImageRule = md.renderer.rules.image ?? (() => '')
