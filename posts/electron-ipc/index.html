@@ -1,5 +1,4 @@
-<!DOCTYPE html><html> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css" integrity="sha384-zh0CIslj+VczCZtlzBcjt5ppRcsAmDnRem7ESsYwWwg3m/OaJ2l4x7YBZl9Kxxib" crossorigin="anonymous"><meta name="generator" content="Astro v5.1.7"><title></title><link rel="stylesheet" href="/_astro/index.CsOifZER.css"></head> <body class="bg-[#333] text-[#ddd]"> <h1>Sustie</h1> <div class="flex gap-4"> <a href="/">主页</a> <a href="/posts/page/1">所有文章</a> <a href="/search/">文章检索</a> </div>  <h1>Electron IPC教程</h1> <h2>Electron的进程模型</h2> <p>在Electron中，有两种进程：主进程和渲染进程。渲染进程本质上就是一个Chromium的进程，它只负责渲染页面，不能访问Node.js提供的操作系统相关的API。主进程是Node.js的进程，可以访问操作系统的API。主进程和渲染进程之间通过IPC（Inter-Process Communication）进行通信。</p> <p>这种模型的好处就在于：</p> <ol> <li>不怎么需要修改Chromium的源码。</li> <li>保证了浏览器环境的安全性。</li> </ol> <h2>如何使用IPC</h2> <p>假设我们希望在渲染进程中打开操作系统的文件选择对话框，并得到用户选择的文件路径。</p> <p>首先在主进程的入口main.ts中创建一个接口open-file：</p>
-import &#123; app, BrowserWindow, ipcMain, dialog &#125; from 'electron'
+<!DOCTYPE html><html> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css" integrity="sha384-zh0CIslj+VczCZtlzBcjt5ppRcsAmDnRem7ESsYwWwg3m/OaJ2l4x7YBZl9Kxxib" crossorigin="anonymous"><meta name="generator" content="Astro v5.1.7"><title></title><link rel="stylesheet" href="/_astro/index.CsOifZER.css"></head> <body class="bg-[#333] text-[#ddd]"> <h1>Sustie</h1> <div class="flex gap-4"> <a href="/">主页</a> <a href="/posts/page/1">所有文章</a> <a href="/search/">文章检索</a> </div>  <h1>Electron IPC教程</h1> <h2>Electron的进程模型</h2> <p>在Electron中，有两种进程：主进程和渲染进程。渲染进程本质上就是一个Chromium的进程，它只负责渲染页面，不能访问Node.js提供的操作系统相关的API。主进程是Node.js的进程，可以访问操作系统的API。主进程和渲染进程之间通过IPC（Inter-Process Communication）进行通信。</p> <p>这种模型的好处就在于：</p> <ol> <li>不怎么需要修改Chromium的源码。</li> <li>保证了浏览器环境的安全性。</li> </ol> <h2>如何使用IPC</h2> <p>假设我们希望在渲染进程中打开操作系统的文件选择对话框，并得到用户选择的文件路径。</p> <p>首先在主进程的入口<code>main.ts</code>中创建一个接口<code>open-file</code>：</p> <pre><code>import &#123; app, BrowserWindow, ipcMain, dialog &#125; from 'electron'
 
 app.on('ready', () =&gt; &#123;
   ipcMain.handle('open-file', async () =&gt; &#123;
@@ -10,14 +9,12 @@ app.on('ready', () =&gt; &#123;
   &#125;)
   createWindow()
 &#125;)
-<p>这里要注意，不能在createWindow函数中注册API，因为createWindow函数可能会被调用多次。</p> <p>然后在preload.ts中将open-file接口暴露给渲染进程：</p>
-import &#123; contextBridge, ipcRenderer &#125; from 'electron'
+</code></pre><p>这里要注意，不能在<code>createWindow</code>函数中注册API，因为<code>createWindow</code>函数可能会被调用多次。</p> <p>然后在<code>preload.ts</code>中将<code>open-file</code>接口暴露给渲染进程：</p> <pre><code>import &#123; contextBridge, ipcRenderer &#125; from 'electron'
 
 contextBridge.exposeInMainWorld('eAPI', &#123;
   openFile: () =&gt; ipcRenderer.invoke('open-file'),
 &#125;)
-<p>（preload.ts是渲染进程在正式运行前执行的一个脚本，它具有更多的权限。这个设计主要是为了保证运行时的安全。）</p> <p>这样就可以在渲染进程中通过window.eAPI.openFile()来调用主进程的open-file接口了。例如在Vue组件中：</p>
-&lt;script setup lang=&quot;ts&quot;&gt;
+</code></pre><p>（<code>preload.ts</code>是渲染进程在正式运行前执行的一个脚本，它具有更多的权限。这个设计主要是为了保证运行时的安全。）</p> <p>这样就可以在渲染进程中通过<code>window.eAPI.openFile()</code>来调用主进程的<code>open-file</code>接口了。例如在Vue组件中：</p> <pre><code>&lt;script setup lang=&quot;ts&quot;&gt;
 import &#123; ref &#125; from 'vue'
 
 const filePath = ref&lt;string&gt;('')
@@ -30,12 +27,11 @@ const openFile = async () =&gt; &#123;
   &lt;button @click=&quot;openFile&quot;&gt;Open File&lt;/button&gt;
   &lt;p&gt;&#123;&#123; filePath &#125;&#125;&lt;/p&gt;
 &lt;/template&gt;
-<h2>TypeScript支持</h2> <p>Electron无法自动推导出IPC接口的类型，只能手动定义。在项目的任意位置创建一个.d.ts文件，例如src/window.d.ts，然后定义接口：</p>
-interface API &#123;
+</code></pre><h2>TypeScript支持</h2> <p>Electron无法自动推导出IPC接口的类型，只能手动定义。在项目的任意位置创建一个<code>.d.ts</code>文件，例如<code>src/window.d.ts</code>，然后定义接口：</p> <pre><code>interface API &#123;
   openFile: () =&gt; Promise&lt;string&gt;
 &#125;
 
 declare interface Window &#123;
   eAPI: API
 &#125;
-<p>这样TypeScript就能正确推导出window.eAPI.openFile()的类型了。</p>  </body></html>
+</code></pre><p>这样TypeScript就能正确推导出<code>window.eAPI.openFile()</code>的类型了。</p>  </body></html>

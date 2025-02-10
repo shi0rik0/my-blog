@@ -1,5 +1,4 @@
-<!DOCTYPE html><html> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css" integrity="sha384-zh0CIslj+VczCZtlzBcjt5ppRcsAmDnRem7ESsYwWwg3m/OaJ2l4x7YBZl9Kxxib" crossorigin="anonymous"><meta name="generator" content="Astro v5.1.7"><title></title><link rel="stylesheet" href="/_astro/index.CsOifZER.css"></head> <body class="bg-[#333] text-[#ddd]"> <h1>Sustie</h1> <div class="flex gap-4"> <a href="/">主页</a> <a href="/posts/page/1">所有文章</a> <a href="/search/">文章检索</a> </div>  <h1>用Python实现经典设计模式（更新中）</h1> <h2>观察者模式（Observer Pattern）</h2> <p>所谓观察者模式，就是一个简单的消息通知机制。当一个对象想要发送消息时，订阅了这个消息的对象会收到通知。</p> <p>假设我们有一个杂志社MagazinePublisher，它有很多订阅者Subscriber，当杂志社有新的杂志发布时，会通知所有的订阅者。</p>
-class Subscriber:
+<!DOCTYPE html><html> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css" integrity="sha384-zh0CIslj+VczCZtlzBcjt5ppRcsAmDnRem7ESsYwWwg3m/OaJ2l4x7YBZl9Kxxib" crossorigin="anonymous"><meta name="generator" content="Astro v5.1.7"><title></title><link rel="stylesheet" href="/_astro/index.CsOifZER.css"></head> <body class="bg-[#333] text-[#ddd]"> <h1>Sustie</h1> <div class="flex gap-4"> <a href="/">主页</a> <a href="/posts/page/1">所有文章</a> <a href="/search/">文章检索</a> </div>  <h1>用Python实现经典设计模式（更新中）</h1> <h2>观察者模式（Observer Pattern）</h2> <p>所谓观察者模式，就是一个简单的消息通知机制。当一个对象想要发送消息时，订阅了这个消息的对象会收到通知。</p> <p>假设我们有一个杂志社<code>MagazinePublisher</code>，它有很多订阅者<code>Subscriber</code>，当杂志社有新的杂志发布时，会通知所有的订阅者。</p> <pre><code>class Subscriber:
     def __init__(self, name):
         self.name = name
 
@@ -26,11 +25,9 @@ publisher = MagazinePublisher()
 publisher.add_subscriber(subscriber1)
 publisher.add_subscriber(subscriber2)
 publisher.notify_subscribers('New magazine is published!')
-<p>上面代码执行后的输出是：</p>
-Alice received message: New magazine is published!
+</code></pre><p>上面代码执行后的输出是：</p> <pre><code>Alice received message: New magazine is published!
 Bob received message: New magazine is published!
-<h2>简单工厂模式（Simple Factory Pattern）</h2> <p>所谓简单工厂模式，就是一个函数的返回类型会因为传入的参数不同而有所不同。</p> <p>假设我们有一个汉堡店，可以根据顾客需求返回不同的汉堡。</p>
-class Hamburger:
+</code></pre><h2>简单工厂模式（Simple Factory Pattern）</h2> <p>所谓简单工厂模式，就是一个函数的返回类型会因为传入的参数不同而有所不同。</p> <p>假设我们有一个汉堡店，可以根据顾客需求返回不同的汉堡。</p> <pre><code>class Hamburger:
     def eat(self):
         print(f'Eating a &#123;self._type&#125; hamburger')
 
@@ -54,11 +51,9 @@ beef_hamburger = make_hamburger('beef')
 beef_hamburger.eat()
 chicken_hamburger = make_hamburger('chicken')
 chicken_hamburger.eat()
-<p>上面代码执行后的输出是：</p>
-Eating a beef hamburger
+</code></pre><p>上面代码执行后的输出是：</p> <pre><code>Eating a beef hamburger
 Eating a chicken hamburger
-<h2>单例模式（Singleton Pattern）</h2> <p>所谓单例模式，就是一个类只能有一个实例。在 Python 中，最简单的实现方式就是利用 module，因为一个 Python module 只会执行一次。</p>
-# singleton.py
+</code></pre><h2>单例模式（Singleton Pattern）</h2> <p>所谓单例模式，就是一个类只能有一个实例。在 Python 中，最简单的实现方式就是利用 module，因为一个 Python module 只会执行一次。</p> <pre><code># singleton.py
 class Singleton:
     def __init__(self):
         if hasattr(self.__class__, '_created'):
@@ -69,8 +64,8 @@ class Singleton:
         print('Doing something')
 
 singleton = Singleton()
-# main.py
+</code></pre><pre><code># main.py
 from singleton import singleton
 
 singleton.do_something()
-<h2>策略模式（Strategy Pattern）</h2> <p>策略模式本质上就是利用了组合的思想，把类的一些功能“外包”给其他类。</p> <p>（还在更新中……）</p>  </body></html>
+</code></pre><h2>策略模式（Strategy Pattern）</h2> <p>策略模式本质上就是利用了组合的思想，把类的一些功能“外包”给其他类。</p> <p>（还在更新中……）</p>  </body></html>

@@ -1,5 +1,4 @@
-<!DOCTYPE html><html> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css" integrity="sha384-zh0CIslj+VczCZtlzBcjt5ppRcsAmDnRem7ESsYwWwg3m/OaJ2l4x7YBZl9Kxxib" crossorigin="anonymous"><meta name="generator" content="Astro v5.1.7"><title></title><link rel="stylesheet" href="/_astro/index.CsOifZER.css"></head> <body class="bg-[#333] text-[#ddd]"> <h1>Sustie</h1> <div class="flex gap-4"> <a href="/">主页</a> <a href="/posts/page/1">所有文章</a> <a href="/search/">文章检索</a> </div>  <h1>Python标准库的functools.wraps装饰器</h1> <p>最近写代码的时候，发现给一个函数加了装饰器后就会报错。后来发现是因为装饰器抹去了原函数的 type hints 信息，导致后续逻辑出错。Python 的函数对象有很多 metadata，比如函数名、docstring、type hints 等，functools.wraps装饰器的作用就是复制这些 metadata。</p> <p>请看下面的示例：</p>
-from functools import wraps
+<!DOCTYPE html><html> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css" integrity="sha384-zh0CIslj+VczCZtlzBcjt5ppRcsAmDnRem7ESsYwWwg3m/OaJ2l4x7YBZl9Kxxib" crossorigin="anonymous"><meta name="generator" content="Astro v5.1.7"><title></title><link rel="stylesheet" href="/_astro/index.CsOifZER.css"></head> <body class="bg-[#333] text-[#ddd]"> <h1>Sustie</h1> <div class="flex gap-4"> <a href="/">主页</a> <a href="/posts/page/1">所有文章</a> <a href="/search/">文章检索</a> </div>  <h1>Python标准库的functools.wraps装饰器</h1> <p>最近写代码的时候，发现给一个函数加了装饰器后就会报错。后来发现是因为装饰器抹去了原函数的 type hints 信息，导致后续逻辑出错。Python 的函数对象有很多 metadata，比如函数名、docstring、type hints 等，<code>functools.wraps</code>装饰器的作用就是复制这些 metadata。</p> <p>请看下面的示例：</p> <pre><code>from functools import wraps
 
 def decorator(func):
     def new_func():
@@ -22,4 +21,4 @@ def g():
 
 print(f.__name__)  # 输出：new_func
 print(g.__name__)  # 输出：g
- </body></html>
+</code></pre>  </body></html>

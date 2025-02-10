@@ -1,12 +1,10 @@
-<!DOCTYPE html><html> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css" integrity="sha384-zh0CIslj+VczCZtlzBcjt5ppRcsAmDnRem7ESsYwWwg3m/OaJ2l4x7YBZl9Kxxib" crossorigin="anonymous"><meta name="generator" content="Astro v5.1.7"><title></title><link rel="stylesheet" href="/_astro/index.CsOifZER.css"></head> <body class="bg-[#333] text-[#ddd]"> <h1>Sustie</h1> <div class="flex gap-4"> <a href="/">主页</a> <a href="/posts/page/1">所有文章</a> <a href="/search/">文章检索</a> </div>  <h1>代理服务器设置方法</h1> <p>由于 GFW 的存在，在中国境内访问境外的网站有时候会非常的慢，这时候就只能使用代理，但是有些程序没有使用系统全局的代理设置，需要自己手动配置代理。本文总结了一些需要手动配置的程序的配置方法。</p> <h2>git</h2> <p>Git 没有专门针对 HTTPS 协议的代理设置，不管是 HTTP 还是 HTTPS，都是使用 http.proxy 来设置代理。</p>
-git config --global http.proxy # 查看代理设置
+<!DOCTYPE html><html> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css" integrity="sha384-zh0CIslj+VczCZtlzBcjt5ppRcsAmDnRem7ESsYwWwg3m/OaJ2l4x7YBZl9Kxxib" crossorigin="anonymous"><meta name="generator" content="Astro v5.1.7"><title></title><link rel="stylesheet" href="/_astro/index.CsOifZER.css"></head> <body class="bg-[#333] text-[#ddd]"> <h1>Sustie</h1> <div class="flex gap-4"> <a href="/">主页</a> <a href="/posts/page/1">所有文章</a> <a href="/search/">文章检索</a> </div>  <h1>代理服务器设置方法</h1> <p>由于 GFW 的存在，在中国境内访问境外的网站有时候会非常的慢，这时候就只能使用代理，但是有些程序没有使用系统全局的代理设置，需要自己手动配置代理。本文总结了一些需要手动配置的程序的配置方法。</p> <h2>git</h2> <p>Git 没有专门针对 HTTPS 协议的代理设置，不管是 HTTP 还是 HTTPS，都是使用 <code>http.proxy</code> 来设置代理。</p> <pre><code>git config --global http.proxy # 查看代理设置
 git config --global http.proxy http://example.com:8000
 git config --global --unset http.proxy
-<h2>npm</h2>
-npm config get proxy
+</code></pre><h2>npm</h2> <pre><code>npm config get proxy
 npm config get https-proxy
 npm config set proxy http://example.com:8000
 npm config set https-proxy http://example.com:8000
 npm config delete proxy
 npm config delete https-proxy
- </body></html>
+</code></pre>  </body></html>

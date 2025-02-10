@@ -1,10 +1,8 @@
-<!DOCTYPE html><html> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css" integrity="sha384-zh0CIslj+VczCZtlzBcjt5ppRcsAmDnRem7ESsYwWwg3m/OaJ2l4x7YBZl9Kxxib" crossorigin="anonymous"><meta name="generator" content="Astro v5.1.7"><title></title><link rel="stylesheet" href="/_astro/index.CsOifZER.css"></head> <body class="bg-[#333] text-[#ddd]"> <h1>Sustie</h1> <div class="flex gap-4"> <a href="/">主页</a> <a href="/posts/page/1">所有文章</a> <a href="/search/">文章检索</a> </div>  <h1>用Python的zipfile标准库解压非标准编码的zip压缩包</h1> <p>时至今日（2024 年），依然有很多日本的 zip 压缩包采用 Shift JIS 编码。使用 7-Zip 等软件解压这些压缩包的时候，会发现文件名都是乱码。WinRAR 支持指定压缩包的文本编码，但是我个人不怎么喜欢 WinRAR。因此，我决定使用 Python 的标准库来解压非标准编码的 zip 压缩包。</p> <p>对于 3.11 及 3.11 之后的 Python 版本，ZipFile提供了一个metadata_encoding的参数，通过指定这个参数就可以设置编码：</p>
-import zipfile
+<!DOCTYPE html><html> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css" integrity="sha384-zh0CIslj+VczCZtlzBcjt5ppRcsAmDnRem7ESsYwWwg3m/OaJ2l4x7YBZl9Kxxib" crossorigin="anonymous"><meta name="generator" content="Astro v5.1.7"><title></title><link rel="stylesheet" href="/_astro/index.CsOifZER.css"></head> <body class="bg-[#333] text-[#ddd]"> <h1>Sustie</h1> <div class="flex gap-4"> <a href="/">主页</a> <a href="/posts/page/1">所有文章</a> <a href="/search/">文章检索</a> </div>  <h1>用Python的zipfile标准库解压非标准编码的zip压缩包</h1> <p>时至今日（2024 年），依然有很多日本的 zip 压缩包采用 Shift JIS 编码。使用 7-Zip 等软件解压这些压缩包的时候，会发现文件名都是乱码。WinRAR 支持指定压缩包的文本编码，但是我个人不怎么喜欢 WinRAR。因此，我决定使用 Python 的标准库来解压非标准编码的 zip 压缩包。</p> <p>对于 3.11 及 3.11 之后的 Python 版本，<code>ZipFile</code>提供了一个<code>metadata_encoding</code>的参数，通过指定这个参数就可以设置编码：</p> <pre><code>import zipfile
 
 with zipfile.ZipFile('foo.zip', metadata_encoding='cp932') as f:
     f.extractall()
-<p>如果是 3.11 之前的 Python 版本，对于非 UTF-8 编码的压缩包，ZipFile默认使用的是 cp437 编码，因此我们需要手动修改字符串编码，然后再解压：</p>
-import zipfile
+</code></pre><p>如果是 3.11 之前的 Python 版本，对于非 UTF-8 编码的压缩包，<code>ZipFile</code>默认使用的是 cp437 编码，因此我们需要手动修改字符串编码，然后再解压：</p> <pre><code>import zipfile
 import os
 import shutil
 
@@ -18,4 +16,4 @@ with zipfile.ZipFile('foo.zip') as f:
             os.makedirs(os.path.dirname(path), exist_ok=True)
             with open(path, 'wb') as dst:
                 shutil.copyfileobj(src, dst)
-<p>顺带一提，根据<a href="https://stackoverflow.com/questions/13261347/correctly-decoding-zip-entry-file-names-cp437-utf-8-or">这个 StackOverflow 问题</a>，zip 标准规定：若 UTF-8 的 flag 没有被设置，那么文件名的编码就应该是 cp437，但是实际实现很多都没有遵从标准。</p>  </body></html>
+</code></pre><p>顺带一提，根据<a href="https://stackoverflow.com/questions/13261347/correctly-decoding-zip-entry-file-names-cp437-utf-8-or">这个 StackOverflow 问题</a>，zip 标准规定：若 UTF-8 的 flag 没有被设置，那么文件名的编码就应该是 cp437，但是实际实现很多都没有遵从标准。</p>  </body></html>
