@@ -66,8 +66,10 @@ interface API {
   readFile: (filePath: string) => Promise<string>
 }
 
-declare interface Window {
-  eAPI: API
+declare global {
+  interface Window {
+    eAPI: API
+  }
 }
 ```
 
