@@ -29,7 +29,9 @@ const readFile = async () =&gt; &#123;
   readFile: (filePath: string) =&gt; Promise&lt;string&gt;
 &#125;
 
-declare interface Window &#123;
-  eAPI: API
+declare global &#123;
+  interface Window &#123;
+    eAPI: API
+  &#125;
 &#125;
 </code></pre><p>这样TypeScript就能正确推导出<code>window.eAPI.readFile()</code>的类型了。</p>  </body></html>
