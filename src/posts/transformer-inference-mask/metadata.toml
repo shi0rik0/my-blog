@@ -1,0 +1,4 @@
+title = "Transformer decoder推理时是否应该设置casual mask"
+created = "2025-02-19"
+updated = "2025-02-19"
+tags = ["transformer"]
