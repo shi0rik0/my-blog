@@ -1,0 +1,22 @@
+<!DOCTYPE html><html> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><!-- KaTeX --><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css" integrity="sha384-zh0CIslj+VczCZtlzBcjt5ppRcsAmDnRem7ESsYwWwg3m/OaJ2l4x7YBZl9Kxxib" crossorigin="anonymous"><!-- Prism --><link href="/lib/prism.css" rel="stylesheet"><script src="/lib/prism.js"></script><meta name="generator" content="Astro v5.1.7"><title></title><link rel="stylesheet" href="/_astro/index.CsOifZER.css"></head> <body class="bg-[#333] text-[#ddd]"> <h1>Sustie</h1> <div class="flex gap-4"> <a href="/">主页</a> <a href="/posts/page/1">所有文章</a> <a href="/search/">文章检索</a> </div>  <h1>Ubuntu安装Redis</h1> <h2>安装Redis</h2> <p>在Ubuntu里，可以直接通过apt安装Redis：</p> <pre><code class="language-bash">sudo apt-get install lsb-release curl gpg
+curl -fsSL https://packages.redis.io/gpg | sudo gpg --dearmor -o /usr/share/keyrings/redis-archive-keyring.gpg
+sudo chmod 644 /usr/share/keyrings/redis-archive-keyring.gpg
+echo &quot;deb [signed-by=/usr/share/keyrings/redis-archive-keyring.gpg] https://packages.redis.io/deb $(lsb_release -cs) main&quot; | sudo tee /etc/apt/sources.list.d/redis.list
+sudo apt-get update
+sudo apt-get install redis
+</code></pre><p>安装完成后，会自动启动Redis，并设置为开机启动。</p> <p>可以通过<code>redis-cli</code>命令来测试Redis是否安装成功：</p> <pre><code class="language-bash">$ redis-cli
+127.0.0.1:6379&gt; ping
+PONG
+</code></pre><h2>允许网络连接</h2> <p>默认情况下，Redis只允许本地连接。如果需要允许通过网络连接，可以修改<code>/etc/redis/redis.conf</code>文件，将<code>bind</code>属性修改为允许的IP地址。</p> <p>默认情况下，如果通过网络连接，Redis会强制要求启用密码。如果是在内网环境下，不启用密码其实也可以。可以通过在配置文件中禁用<code>protected-mode</code>来允许无密码连接：</p> <pre><code>protected-mode no
+</code></pre><p>修改完配置文件后，需要重启Redis使配置生效：</p> <pre><code class="language-bash">sudo systemctl restart redis
+</code></pre><h2>用Python连接Redis</h2> <p>可以通过<code>redis</code>库来连接Redis：</p> <pre><code class="language-bash">pip install redis
+</code></pre><pre><code class="language-python">import redis
+
+r = redis.Redis(host='localhost', port=6379, db=0)
+
+try:
+    r.ping()
+    print('Connected to Redis!')
+except redis.ConnectionError:
+    print('Could not connect to Redis.')
+</code></pre><h2>Redis持久化</h2> <p>默认情况下，Redis的持久化文件会保存在<code>/var/lib/redis/dump.rdb</code>中。建议定时备份该文件。</p>  </body></html>
