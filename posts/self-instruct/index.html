@@ -1,0 +1,69 @@
+<!DOCTYPE html><html> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><!-- KaTeX --><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css" integrity="sha384-zh0CIslj+VczCZtlzBcjt5ppRcsAmDnRem7ESsYwWwg3m/OaJ2l4x7YBZl9Kxxib" crossorigin="anonymous"><!-- Prism --><link href="/lib/prism.css" rel="stylesheet"><script src="/lib/prism.js"></script><meta name="generator" content="Astro v5.1.7"><title></title><link rel="stylesheet" href="/_astro/index.CsOifZER.css"></head> <body class="bg-[#333] text-[#ddd]"> <h1>Sustie</h1> <div class="flex gap-4"> <a href="/">主页</a> <a href="/posts/page/1">所有文章</a> <a href="/search/">文章检索</a> </div>  <h1>Self-Instruct: 让LLM自己生成指令微调数据集</h1> <p>最近看到一篇比较有意思的论文：<a href="https://arxiv.org/abs/2212.10560">Self-Instruct: Aligning Language Models with Self-Generated Instructions</a>。这篇论文的思路就是让LLM自己生成指令微调数据集，然后用它反过来训练自己。这么做有点左脚踩右脚的感觉。基于这个思路，斯坦福大学的团队训练了一个名为Alpaca的模型，模型的权重、数据集和代码都在GitHub上开源了：<a href="https://github.com/tatsu-lab/stanford_alpaca">tatsu-lab/stanford_alpaca</a>。下面就简单介绍一下这个方法。</p> <h2>总体流程</h2> <p>Self-Instruct的总体流程可以用下面的伪代码来表示：</p> <pre><code>初始化数据集
+
+while True:
+    从数据集中随机采样instruction，生成新的instruction
+    判断instruction是否为分类任务
+    if 是:
+        用输出优先（output-first）的方法生成input和output
+    else:
+        用输入优先（input-first）的方法生成input和output
+    评估生成的数据质量，过滤掉质量差的数据
+    将生成的新数据加入数据集
+</code></pre><p>这里需要详细解释的步骤有以下几个：</p> <ol> <li>如何用采样的instruction生成新的instruction。</li> <li>如何判断instruction是否为分类任务。</li> <li>如何生成input和output。</li> </ol> <h2>生成instruction</h2> <p>这个步骤首先是要从数据集中随机采用一些instruction，然后构造以下的prompt：</p> <pre><code>请给出一系列的任务：
+
+任务1：&#123;任务1的描述&#125;
+任务2：&#123;任务2的描述&#125;
+...
+任务n：&#123;任务n的描述&#125;
+任务n+1：
+</code></pre><p>例如：</p> <pre><code>请给出一系列的任务：
+
+任务1：给出一个句子，判断这个句子的情感是正面还是负面。
+任务2：将下面的段落翻译成中文。
+...
+任务n：给出一个一元一次方程，求解这个方程。
+任务n+1：
+</code></pre><h2>判断是否为分类任务</h2> <p>这个步骤比较简单，直接构造prompt询问LLM即可：</p> <pre><code>下面的任务是分类任务吗？
+
+任务：&#123;任务1的描述&#125;
+答案：&#123;是/否&#125;
+
+任务：&#123;任务2的描述&#125;
+答案：&#123;是/否&#125;
+
+...
+
+任务：&#123;任务n的描述&#125;
+答案：&#123;是/否&#125;
+
+任务：&#123;任务n+1的描述&#125;
+答案：
+</code></pre><h2>生成input和output</h2> <p>Self-Instruct会根据instruction是否为分类任务来采取不同的方式。如果是分类任务，就用output-first的方式生成input和output；如果不是分类任务，就用input-first的方式生成input和output。</p> <h3>Output-first</h3> <p>Output-first的方式是先让LLM给出可能的output，然后再让LLM生成input。这个过程可以用下面的prompt来表示：</p> <pre><code>给出一个分类任务，生成所有可能的标签及其对应的输入：
+
+任务：&#123;任务1的描述&#125;
+输出：&#123;任务1的标签1&#125;
+输入：&#123;任务1的标签1对应的输入&#125;
+输出：&#123;任务1的标签2&#125;
+输入：&#123;任务1的标签2对应的输入&#125;
+...
+输出：&#123;任务1的标签n&#125;
+输入：&#123;任务1的标签n对应的输入&#125;
+
+...
+
+任务：&#123;任务n的描述&#125;
+</code></pre><h3>Input-first</h3> <p>Input-first的方式就很直接了，直接给出instruction，然后让LLM生成input和output：</p> <pre><code>给出一个任务，生成尽可能多的输入和输出：
+
+任务：&#123;任务1的描述&#125;
+输入：&#123;任务1的输入1&#125;
+输出：&#123;任务1的输出1&#125;
+输入：&#123;任务1的输入2&#125;
+输出：&#123;任务1的输出2&#125;
+...
+输入：&#123;任务1的输入n&#125;
+输出：&#123;任务1的输出n&#125;
+
+...
+
+任务：&#123;任务n的描述&#125;
+</code></pre><p>其实input-first和output-first没什么本质的区别，只是prompt模板给LLM的引导不同。</p>  </body></html>
