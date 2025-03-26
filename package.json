@@ -9,7 +9,9 @@
     "astro": "astro",
     "shark-watch": "tsc -p tsconfig.shark.json && node build/shark/watch.js",
     "shark-build": "tsc -p tsconfig.shark.json && node build/shark/build.js",
-    "lemon": "tsc -p tsconfig.lemon.json && node build/lemon/index.js"
+    "lemon": "tsc -p tsconfig.lemon.json && node build/lemon/index.js",
+    "test": "tsc -p tsconfig.lemon.json && node build/lemon/test.js",
+    "shark-test": "tsc -p tsconfig.shark.json && node build/shark/test.js"
   },
   "dependencies": {
     "@astrojs/tailwind": "^5.1.4",
@@ -18,6 +20,7 @@
     "astro": "^5.1.7",
     "cheerio": "^1.0.0",
     "chokidar": "^4.0.3",
+    "echarts": "^5.6.0",
     "katex": "^0.16.21",
     "markdown-it": "^14.1.0",
     "minisearch": "^7.1.1",
