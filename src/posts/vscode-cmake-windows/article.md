@@ -13,3 +13,11 @@
 之所以要使用Ninja，是因为默认的VS生成器无法生成clangd需要的`compile_commands.json`文件。
 
 这样就配置完成了。
+
+如果发现编译器输出的信息有乱码，可以在VS Code的配置文件里加入以下设置：
+
+```
+"cmake.outputLogEncoding": "utf-8"
+```
+
+如果`utf-8`不行就改成`gbk`。
