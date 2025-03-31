@@ -1,0 +1,23 @@
+<!DOCTYPE html><html> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><!-- KaTeX --><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css" integrity="sha384-zh0CIslj+VczCZtlzBcjt5ppRcsAmDnRem7ESsYwWwg3m/OaJ2l4x7YBZl9Kxxib" crossorigin="anonymous"><!-- Prism --><link href="/lib/prism.css" rel="stylesheet"><script src="/lib/prism.js"></script><meta name="generator" content="Astro v5.1.7"><title></title><link rel="stylesheet" href="/_astro/index.CsOifZER.css"></head> <body class="bg-[#333] text-[#ddd]"> <h1>Sustie</h1> <div class="flex gap-4"> <a href="/">主页</a> <a href="/posts/page/1">所有文章</a> <a href="/search/">文章检索</a> </div>  <h1>推荐一个免费的SMTP送信服务：SMTP2GO</h1> <p>最近我想实现这么一个功能：编写一个程序监控股价，当剧烈波动时，就给我发个推送通知。仔细想了想，发现成本最低、实现最简单的推送方法是就是给我的邮箱发个邮件。但很可惜的是，现在主流的邮箱服务商都启用了2FA，因此不能直接通过用户名和密码来发送邮件了。最后我找到了一个名为<a href="https://www.smtp2go.com/">SMTP2GO</a>的服务商，它们提供的SMTP服务可以直接使用用户名和密码来发送邮件。下面是利用Python和SMTP2GO来发送邮件的教程。</p> <p>首先要注册一个SMTP2GO的账户。注意：SMTP2GO不支持用public domain的邮箱（例如outlook.com等）注册，必须通过企业、学校邮箱之类的注册。</p> <p>注册之后，在控制台的&quot;Sending&quot; -&gt; &quot;Verified Senders&quot; -&gt; &quot;Single sender emails&quot;里添加一个发件人邮箱。这个邮箱可以是任意邮箱，不一定是你注册SMTP2GO时用的邮箱。当你发送邮件的时候，收件人看到的发件人就是这个邮箱。</p> <p>然后在&quot;Sending&quot; -&gt; &quot;SMTP Users&quot;里添加一个SMTP用户。用户名就是你刚刚添加的发件人邮箱，密码自己设置。</p> <p>然后就可以用Python通过SMTP发送邮件了，下面是一段示例代码：</p> <pre><code class="language-python">import smtplib
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
+
+smtp_server = &quot;mail.smtp2go.com&quot;
+smtp_port = 2525
+smtp_user = &quot;&lt;替换为你的用户名&gt;&quot;
+smtp_password = &quot;&lt;替换为你的密码&gt;&quot;
+recipient_email = &quot;&lt;替换为收件人邮箱&gt;&quot;
+subject = &quot;邮件的标题&quot;
+body = &quot;邮件内容&quot;
+
+msg = MIMEMultipart()
+msg[&quot;From&quot;] = smtp_user
+msg[&quot;To&quot;] = recipient_email
+msg[&quot;Subject&quot;] = subject
+msg.attach(MIMEText(body, &quot;plain&quot;))
+
+with smtplib.SMTP(smtp_server, smtp_port) as server:
+    server.starttls()
+    server.login(smtp_user, smtp_password)
+    server.sendmail(smtp_user, recipient_email, msg.as_string())
+</code></pre>  </body></html>
