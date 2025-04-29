@@ -1,0 +1,56 @@
+<!DOCTYPE html><html> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><!-- KaTeX --><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css" integrity="sha384-zh0CIslj+VczCZtlzBcjt5ppRcsAmDnRem7ESsYwWwg3m/OaJ2l4x7YBZl9Kxxib" crossorigin="anonymous"><!-- Prism --><link href="/lib/prism.css" rel="stylesheet"><script src="/lib/prism.js"></script><meta name="generator" content="Astro v5.1.7"><title></title><link rel="stylesheet" href="/_astro/index.CsOifZER.css"></head> <body class="bg-[#333] text-[#ddd]"> <h1>Sustie</h1> <div class="flex gap-4"> <a href="/">主页</a> <a href="/posts/page/1">所有文章</a> <a href="/search/">文章检索</a> </div>  <h1>PyTorch的BatchSampler的一个优化技巧</h1> <p>最近在阅读PyTorch的源码的时候，发现<code>torch.utils.data.sampler.BatchSampler</code>的实现非常有意思：</p> <pre><code class="language-python">    def __iter__(self) -&gt; Iterator[List[int]]:
+        # Implemented based on the benchmarking in https://github.com/pytorch/pytorch/pull/76951
+        sampler_iter = iter(self.sampler)
+        if self.drop_last:
+            # Create multiple references to the same iterator
+            args = [sampler_iter] * self.batch_size
+            for batch_droplast in zip(*args):
+                yield [*batch_droplast]
+        else:
+            batch = [*itertools.islice(sampler_iter, self.batch_size)]
+            while batch:
+                yield batch
+                batch = [*itertools.islice(sampler_iter, self.batch_size)]
+</code></pre><p>这段代码运用了<code>zip</code>和<code>itertools.islice</code>来实现批量采样的功能。我将其中的核心思想提取出来，写了一个简单的benchmark：</p> <pre><code class="language-python">import time
+import itertools
+
+sampler = range(320000)
+batch_size = 32
+
+
+def batch_iter_naive(sampler, batch_size):
+    batch = []
+    for i in sampler:
+        batch.append(i)
+        if len(batch) == batch_size:
+            yield batch
+            batch = []
+
+
+def batch_iter_faster_1(sampler, batch_size):
+    sampler_iter = iter(sampler)
+    iters = [sampler_iter] * batch_size
+    for batch in zip(*iters):
+        yield list(batch)
+
+
+def batch_iter_faster_2(sampler, batch_size):
+    sampler_iter = iter(sampler)
+    batch = [*itertools.islice(sampler_iter, batch_size)]
+    while batch:
+        yield batch
+        batch = [*itertools.islice(sampler_iter, batch_size)]
+
+
+start = time.time()
+list(batch_iter_naive(sampler, batch_size))
+print(&quot;Naive method time:&quot;, time.time() - start)
+
+start = time.time()
+list(batch_iter_faster_1(sampler, batch_size))
+print(&quot;Faster method 1 time:&quot;, time.time() - start)
+
+start = time.time()
+list(batch_iter_faster_2(sampler, batch_size))
+print(&quot;Faster method 2 time:&quot;, time.time() - start)
+</code></pre><p>结果发现改进后的方法确实比普通方法快了不少。</p> <p>至于速度变快的原因，我猜测是因为Python的for循环迭代开销太大，而<code>zip</code>和<code>itertools.islice</code>都是C实现的，迭代速度更快。从中可以总结出一个Python优化的技巧：用C实现的函数减少for循环的次数。</p>  </body></html>
