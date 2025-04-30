@@ -1,4 +1,4 @@
-<!DOCTYPE html><html> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><!-- KaTeX --><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css" integrity="sha384-zh0CIslj+VczCZtlzBcjt5ppRcsAmDnRem7ESsYwWwg3m/OaJ2l4x7YBZl9Kxxib" crossorigin="anonymous"><!-- Prism --><link href="/lib/prism.css" rel="stylesheet"><script src="/lib/prism.js"></script><meta name="generator" content="Astro v5.1.7"><title></title><link rel="stylesheet" href="/_astro/index.CsOifZER.css"></head> <body class="bg-[#333] text-[#ddd]"> <h1>Sustie</h1> <div class="flex gap-4"> <a href="/">主页</a> <a href="/posts/page/1">所有文章</a> <a href="/search/">文章检索</a> </div>  <h1>Python配置库Hydra的教程</h1> <p>Hydra是Meta团队开发的一个Python库，主要是用来管理配置的。虽然我个人比较反感这种框架，因为我觉得配置本身是一个很简单的需求，没必要搞得这么复杂，但是Habitat仿真器的配置就是用Hydra加载的，所以还是不得不稍微了解一下。</p> <p>Hydra配置文件都是用YAML格式编写的，下面是一个例子：</p> <p>main.yaml:</p> <pre><code class="language-yaml">defaults:
+<!DOCTYPE html><html> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><!-- KaTeX --><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css" integrity="sha384-zh0CIslj+VczCZtlzBcjt5ppRcsAmDnRem7ESsYwWwg3m/OaJ2l4x7YBZl9Kxxib" crossorigin="anonymous"><!-- Prism --><link href="/lib/prism.css" rel="stylesheet"><script src="/lib/prism.js"></script><meta name="generator" content="Astro v5.1.7"><title></title><link rel="stylesheet" href="/_astro/fee.D5xOGKbN.css"></head> <body class="bg-[#333] text-[#ddd]"> <h1>Sustie</h1> <div class="flex gap-4"> <a href="/">主页</a> <a href="/posts/page/1">所有文章</a> <a href="/search/">文章检索</a> </div>  <h1>Python配置库Hydra的教程</h1> <p>Hydra是Meta团队开发的一个Python库，主要是用来管理配置的。虽然我个人比较反感这种框架，因为我觉得配置本身是一个很简单的需求，没必要搞得这么复杂，但是Habitat仿真器的配置就是用Hydra加载的，所以还是不得不稍微了解一下。</p> <p>Hydra配置文件都是用YAML格式编写的，下面是一个例子：</p> <p>main.yaml:</p> <pre><code class="language-yaml">defaults:
   - _self_
   - db/engine: mysql
   - network
@@ -20,15 +20,15 @@ port: 3306
     &quot;port&quot;: 3306
   &#125;
 &#125;
-</code></pre><p>接下来我将解释一下配置文件的细节。</p> <p>首先是main.yaml中的<code>defaults</code>字段，这个字段会被Hydra特别处理，它的作用是加载其他配置，所以我觉得其实叫做<code>imports</code>更合适。这个字段是一个列表，列表中的元素可以是以下三种类型：</p> <ul> <li><code>_self_</code>：表示加载当前配置文件。</li> <li>一个键值对，例如<code>db/engine: mysql</code>，表示在<code>db/engine</code>这个group中加载<code>mysql.yaml</code>这个配置文件。（Group是Hydra的一个术语，下面会详细介绍，这里你可以理解为是配置文件所在的目录。）需要注意的是，如果指定了group，Hydra会将分隔符<code>/</code>看作是<code>.</code>，所以<code>db/engine/mysql.yaml</code>中的配置都会被放在<code>db.engine</code>这个对象中。</li> <li>一个字符串，例如<code>network</code>，表示加载<code>network.yaml</code>这个配置文件。</li> </ul> <p>优先级方面，在<code>defaults</code>列表中越靠后的配置优先级越高。</p> <p>接下来要介绍一下group这个概念。Hydra的group有两种实现方法，一种是用文件夹来实现，一种是用ConfigStore来实现。用文件夹实现很好理解，比如说group是<code>db/engine</code>，那么就会在这个文件夹下面查找配置文件。而用ConfigStore实现就是用代码来添加group，下面是一个例子：</p> <pre><code class="language-python">from dataclasses import dataclass
-
-from hydra.core.config_store import ConfigStore
+</code></pre><p>接下来我将解释一下配置文件的细节。</p> <p>首先是main.yaml中的<code>defaults</code>字段，这个字段会被Hydra特别处理，它的作用是加载其他配置，所以我觉得其实叫做<code>imports</code>更合适。这个字段是一个列表，列表中的元素可以是以下三种类型：</p> <ul> <li><code>_self_</code>：表示加载当前配置文件。</li> <li>一个键值对，例如<code>db/engine: mysql</code>，表示在<code>db/engine</code>这个group中加载<code>mysql.yaml</code>这个配置文件。（Group是Hydra的一个术语，下面会详细介绍，这里你可以理解为是配置文件所在的目录。）需要注意的是，如果指定了group，Hydra会将分隔符<code>/</code>看作是<code>.</code>，所以<code>db/engine/mysql.yaml</code>中的配置都会被放在<code>db.engine</code>这个对象中。</li> <li>一个字符串，例如<code>network</code>，表示加载<code>network.yaml</code>这个配置文件。</li> </ul> <p>优先级方面，在<code>defaults</code>列表中越靠后的配置优先级越高。</p> <p>接下来要介绍一下group这个概念。Hydra的group有两种实现方法，一种是用文件夹来实现，一种是用ConfigStore来实现。用文件夹实现很好理解，比如说group是<code>db/engine</code>，那么就会在这个文件夹下面查找配置文件。而用ConfigStore实现就是用代码来添加group，下面是一个例子：</p> <pre><code class="language-python">from hydra.core.config_store import ConfigStore
+from dataclasses import dataclass
 
 @dataclass
 class MySQLConfig:
     name: str = &quot;mysql&quot;
 
 cs = ConfigStore.instance()
-cs.store(group=&quot;db/engine&quot;, node=MySQLConfig)
+# 效果等同于创建一个db/engine/mysql.yaml文件
+cs.store(group=&quot;db/engine&quot;, name=&quot;mysql&quot;, node=MySQLConfig)
 </code></pre><p>所以说，当你看到一个group的时候，要么在Hydra的搜索路径下看看有没有这个文件夹，要么在代码里看看有没有注册过这个group。</p> <p>还有一点，一个Hydra应用是可以通过命令行参数来覆盖或者新增配置的，如果是覆盖配置，就传入<code>key=value</code>，如果是新增配置，就传入<code>+key=value</code>（需要一个加号）。例如：</p> <pre><code class="language-bash">python main.py db.engine.name=sqlite +db.engine.version=3.0
 </code></pre>  </body></html>
