@@ -16,4 +16,13 @@ ssh-copy-id username@remote_host
 
 运行命令的时候，会让你输入密码登入远程机器。
 
-这样就 OK 了，就是这么简单！
+`ssh-copy-id`命令还有两个常用的参数：
+
+- `-i`：可以用来指定密钥文件的路径。
+- `-f`：默认情况下，`ssh-copy-id`需要同时提供私钥和公钥。如果只有公钥，就需要加上这个参数。
+
+例如：
+
+```bash
+ssh-copy-id -i ~/.ssh/id_rsa.pub -f username@remote_host
+```
