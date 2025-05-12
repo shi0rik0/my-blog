@@ -1,0 +1,46 @@
+<!DOCTYPE html><html> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><!-- KaTeX --><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css" integrity="sha384-zh0CIslj+VczCZtlzBcjt5ppRcsAmDnRem7ESsYwWwg3m/OaJ2l4x7YBZl9Kxxib" crossorigin="anonymous"><!-- Prism --><link href="/lib/prism.css" rel="stylesheet"><script src="/lib/prism.js"></script><meta name="generator" content="Astro v5.1.7"><title></title><link rel="stylesheet" href="/_astro/index.CsOifZER.css"></head> <body class="bg-[#333] text-[#ddd]"> <h1>Sustie</h1> <div class="flex gap-4"> <a href="/">主页</a> <a href="/posts/page/1">所有文章</a> <a href="/search/">文章检索</a> </div>  <h1>在Python中实现一个简易的协程</h1> <h2>基本概念</h2> <p>在Python的协程体系中有两个基本概念：coroutine和coroutine function。</p> <p>coroutine对象拥有一个<code>__await__</code>函数，调用这个函数会返回一个生成器。而调用一个coroutine function则会返回一个coroutine对象。</p> <pre><code class="language-python">import asyncio
+from collections.abc import Generator
+
+async def f():
+    pass
+
+# 都会返回 True
+print(asyncio.iscoroutinefunction(f))
+print(asyncio.iscoroutine(f()))
+print(isinstance(f().__await__(), Generator))
+</code></pre><p>这样我们就明白Python协程的工作原理了。当我们await一个协程对象的时候，实际上是调用了这个对象的<code>__await__</code>方法，得到一个生成器对象。这个生成器对象会被调度器调度执行。协程通过<code>yield</code>语句来暂停执行，将控制权交还给调度器。</p> <h2>实现一个简单的协程</h2> <p>要实现一个简单的协程，只需要定义一个能返回生成器的的<code>__await__</code>方法，即可，下面是一个简单的例子：</p> <pre><code class="language-python">import asyncio
+import time
+import logging
+
+
+logging.basicConfig(
+    level=logging.DEBUG,
+    format=&quot;[%(asctime)s.%(msecs)03d] %(message)s&quot;,
+    datefmt=&quot;%H:%M:%S&quot;,
+)
+
+
+class MyAsyncSleep:
+    def __init__(self, seconds):
+        self.seconds = seconds
+
+    def __await__(self):
+        start = time.time()
+        while time.time() - start &lt; self.seconds:
+            yield
+        logging.debug(f&quot;Slept for &#123;self.seconds&#125; seconds&quot;)
+
+
+async def main():
+    logging.debug(&quot;Starting sleep...&quot;)
+    await asyncio.gather(
+        MyAsyncSleep(1),
+        MyAsyncSleep(2),
+        MyAsyncSleep(3),
+    )
+    logging.debug(&quot;Finished sleep!&quot;)
+
+
+if __name__ == &quot;__main__&quot;:
+    asyncio.run(main())
+</code></pre><h2>参考资料</h2> <p><a href="https://aureliano90.github.io/blog/2022/04/28/A_Brief_Introduction_of_Python_Coroutines_and__await__Attribute.html">浅谈Python协程与__await__属性</a></p>  </body></html>
