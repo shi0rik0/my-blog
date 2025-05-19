@@ -1,0 +1,44 @@
+<!DOCTYPE html><html> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><!-- KaTeX --><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css" integrity="sha384-zh0CIslj+VczCZtlzBcjt5ppRcsAmDnRem7ESsYwWwg3m/OaJ2l4x7YBZl9Kxxib" crossorigin="anonymous"><!-- Prism --><link href="/lib/prism.css" rel="stylesheet"><script src="/lib/prism.js"></script><meta name="generator" content="Astro v5.1.7"><title></title><link rel="stylesheet" href="/_astro/index.CsOifZER.css"></head> <body class="bg-[#333] text-[#ddd]"> <h1>Sustie</h1> <div class="flex gap-4"> <a href="/">主页</a> <a href="/posts/page/1">所有文章</a> <a href="/search/">文章检索</a> </div>  <h1>深入Python的asyncio：Future对象</h1> <p>假设我们有这么一个异步API，它接受一个callback参数，当任务完成时会调用这个callback函数来返回结果：</p> <pre><code class="language-python">import threading
+import time
+
+
+def async_func(callback):
+    def thread_func():
+        time.sleep(2)
+        callback(123)
+
+    thread = threading.Thread(target=thread_func)
+    thread.start()
+
+
+def callback(result):
+    print(f&quot;Callback executed with result: &#123;result&#125;&quot;)
+
+
+async_func(callback)
+</code></pre><p>有没有办法可以将这个传统的异步API包装成一个兼容asyncio体系的API呢？答案是可以。我们可以用<code>asyncio.Future</code>来实现这个功能。<code>asyncio.Future</code>是asyncio的一个底层API，通过Future对象，我们就可以通知事件循环某个操作已经完成了。下面是一个示例：</p> <pre><code class="language-python">import asyncio
+import threading
+import time
+
+
+def async_func_awaitable():
+    loop = asyncio.get_running_loop()
+    future = loop.create_future()
+
+    def thread_func():
+        time.sleep(2)
+        loop.call_soon_threadsafe(future.set_result, 123)
+
+    thread = threading.Thread(target=thread_func)
+    thread.start()
+
+    return future
+
+
+async def main():
+    result = await async_func_awaitable()
+    print(f&quot;Coroutine executed with result: &#123;result&#125;&quot;)
+
+
+asyncio.run(main())
+</code></pre><p>在上面的代码中，我们首先用<code>asyncio.get_running_loop()</code>获取事件循环对象，然后创建并返回一个Future对象。当操作完成后，调用<code>loop.call_soon_threadsafe(future.set_result, 123)</code>来设置Future的结果。剩下的逻辑，事件循环都会帮我们处理。</p> <p>注意：这里一定要用<code>call_soon_threadsafe</code>来设置结果，不能直接调用<code>future.set_result</code>，否则会导致线程安全问题。</p>  </body></html>
