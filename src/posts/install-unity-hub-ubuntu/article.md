@@ -19,6 +19,13 @@ sudo dpkg -i libssl1.1_1.1.0g-2ubuntu4_amd64.deb
 
 然后**重启**系统，即可正常使用Unity Hub。
 
+虽然Unity Hub是成功安装了，但是我一打开Unity项目就会报错，遇到两个没有错误信息的error，查看了`Editor.log`之后，发现是因为C#找不到有效的ICU库。尽管我的Ubuntu系统上已经安装了`libicu74`，但是似乎因为版本太新所以用不了，解决办法是再安装一个旧版本的`libicu66`：
+
+```bash
+wget http://archive.ubuntu.com/ubuntu/pool/main/i/icu/libicu66_66.1-2ubuntu2.1_amd64.deb
+sudo dpkg -i libicu66_66.1-2ubuntu2.1_amd64.deb
+```
+
 ## 参考
 
 1. https://www.reddit.com/r/unity/comments/1g44vuk/linuxubuntu_2410up_to_date_how_to_install_unity/
