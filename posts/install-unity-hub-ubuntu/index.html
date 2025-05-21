@@ -3,4 +3,6 @@ sudo chown root:root /opt/unityhub/chrome-sandbox
 sudo chmod 4755 /opt/unityhub/chrome-sandbox
 </code></pre><p>然后启动Unity Hub就会发现一直卡在加载界面，错误提示为<code>Licensing SDK logging callback is not registered</code>，这个问题的解决办法是手动安装<code>libssl1.1</code>：</p> <pre><code class="language-bash">wget http://archive.ubuntu.com/ubuntu/pool/main/o/openssl/libssl1.1_1.1.0g-2ubuntu4_amd64.deb
 sudo dpkg -i libssl1.1_1.1.0g-2ubuntu4_amd64.deb
-</code></pre><p>然后<strong>重启</strong>系统，即可正常使用Unity Hub。</p> <h2>参考</h2> <ol> <li>https://www.reddit.com/r/unity/comments/1g44vuk/linuxubuntu_2410up_to_date_how_to_install_unity/</li> <li>https://discussions.unity.com/t/error-in-run-unity-hub/880643/20</li> </ol>  </body></html>
+</code></pre><p>然后<strong>重启</strong>系统，即可正常使用Unity Hub。</p> <p>虽然Unity Hub是成功安装了，但是我一打开Unity项目就会报错，遇到两个没有错误信息的error，查看了<code>Editor.log</code>之后，发现是因为C#找不到有效的ICU库。尽管我的Ubuntu系统上已经安装了<code>libicu74</code>，但是似乎因为版本太新所以用不了，解决办法是再安装一个旧版本的<code>libicu66</code>：</p> <pre><code class="language-bash">wget http://archive.ubuntu.com/ubuntu/pool/main/i/icu/libicu66_66.1-2ubuntu2.1_amd64.deb
+sudo dpkg -i libicu66_66.1-2ubuntu2.1_amd64.deb
+</code></pre><h2>参考</h2> <ol> <li>https://www.reddit.com/r/unity/comments/1g44vuk/linuxubuntu_2410up_to_date_how_to_install_unity/</li> <li>https://discussions.unity.com/t/error-in-run-unity-hub/880643/20</li> </ol>  </body></html>
