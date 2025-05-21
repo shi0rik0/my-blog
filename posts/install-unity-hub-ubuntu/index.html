@@ -3,4 +3,4 @@ sudo chown root:root /opt/unityhub/chrome-sandbox
 sudo chmod 4755 /opt/unityhub/chrome-sandbox
 </code></pre><p>然后启动Unity Hub就会发现一直卡在加载界面，错误提示为<code>Licensing SDK logging callback is not registered</code>，这个问题的解决办法是手动安装<code>libssl1.1</code>：</p> <pre><code class="language-bash">wget http://archive.ubuntu.com/ubuntu/pool/main/o/openssl/libssl1.1_1.1.0g-2ubuntu4_amd64.deb
 sudo dpkg -i libssl1.1_1.1.0g-2ubuntu4_amd64.deb
-</code></pre><p>然后<strong>重启</strong>系统，即可正常使用Unity Hub。</p>  </body></html>
+</code></pre><p>然后<strong>重启</strong>系统，即可正常使用Unity Hub。</p> <h2>参考</h2> <ol> <li>https://www.reddit.com/r/unity/comments/1g44vuk/linuxubuntu_2410up_to_date_how_to_install_unity/</li> <li>https://discussions.unity.com/t/error-in-run-unity-hub/880643/20</li> </ol>  </body></html>
