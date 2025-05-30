@@ -1,0 +1,7 @@
+<!DOCTYPE html><html> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><!-- KaTeX --><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css" integrity="sha384-zh0CIslj+VczCZtlzBcjt5ppRcsAmDnRem7ESsYwWwg3m/OaJ2l4x7YBZl9Kxxib" crossorigin="anonymous"><!-- Prism --><link href="/lib/prism.css" rel="stylesheet"><script src="/lib/prism.js"></script><meta name="generator" content="Astro v5.1.7"><title></title><link rel="stylesheet" href="/_astro/index.CsOifZER.css"></head> <body class="bg-[#333] text-[#ddd]"> <h1>Sustie</h1> <div class="flex gap-4"> <a href="/">主页</a> <a href="/posts/page/1">所有文章</a> <a href="/search/">文章检索</a> </div>  <h1>解决Matplotlib中文乱码问题</h1> <p>Python的Matplotlib库默认是无法显示中文的，因为Matplotlib默认使用的字体不支持中文字符。为了在Matplotlib中显示中文，我们需要手动配置字体。</p> <p>首先可以用以下代码查看当前系统可用的字体</p> <pre><code class="language-python">import matplotlib.font_manager as fm
+
+print(fm.get_font_names())
+</code></pre><p>如果是Windows操作系统，通常可以使用<code>Microsoft YaHei</code>（微软雅黑）字体。</p> <p>选好字体之后就可以配置Matplotlib的字体了：</p> <pre><code class="language-python">import matplotlib.pyplot as plt
+
+plt.rcParams['font.sans-serif'] = ['Microsoft YaHei']
+</code></pre><h2>参考资料</h2> <ol> <li><a href="https://www.runoob.com/matplotlib/matplotlib-zh.html">Matplotlib 中文显示 | 菜鸟教程</a></li> </ol>  </body></html>
