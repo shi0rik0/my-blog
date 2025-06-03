@@ -1,0 +1,29 @@
+<!DOCTYPE html><html> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><!-- KaTeX --><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css" integrity="sha384-zh0CIslj+VczCZtlzBcjt5ppRcsAmDnRem7ESsYwWwg3m/OaJ2l4x7YBZl9Kxxib" crossorigin="anonymous"><!-- Prism --><link href="/lib/prism.css" rel="stylesheet"><script src="/lib/prism.js"></script><meta name="generator" content="Astro v5.1.7"><title></title><link rel="stylesheet" href="/_astro/index.CCeQH6Bz.css"></head> <body class="bg-[#333] text-[#ddd]"> <h1>Sustie</h1> <div class="flex gap-4"> <a href="/">主页</a> <a href="/posts/page/1">所有文章</a> <a href="/search/">文章检索</a> </div>  <h1>LeetCode题解：字母与数字</h1> <p>题目链接：https://leetcode.cn/problems/find-longest-subarray-lcci/</p> <h2>解题思路</h2> <p>这道题可以转化为一个经典的问题：在一个数组中找到和为k的最长子数组。我们只要将数组中的字母替换成1，数字替换成-1，那么原题就变成了在一个数组中找到和为0的最长子数组。</p> <p>要解决这个问题，我们需要用到一个叫做“前缀和”的技巧。我们用<code>sum(i, j)</code>表示数组在区间<code>[i, j)</code>上的和（<code>sum(i, i) = 0</code>），如果令数组<code>prefix[i] = sum(0, i)</code>，那么就可以快速计算出<code>sum(i, j) = prefix[j] - prefix[i]</code>。</p> <p>在一个数组中找到和为k的最长子数组，就等价于找到满足<code>j - i</code>最大的<code>i</code>和<code>j</code>，使得<code>prefix[j] - prefix[i] = k</code>。这是一个双变量的优化问题，我们可以先固定<code>j</code>，然后优化<code>i</code>，这时候就要最小化<code>i</code>，使得<code>prefix[i] = prefix[j] - k</code>。我们可以用一个哈希表来存储每个前缀和第一次出现的位置，这样就可以在O(1)的时间内找到满足条件的<code>i</code>。</p> <h2>代码实现</h2> <pre><code class="language-python">def find_longest_array_with_sum_k(arr, k):
+    # 计算前缀和
+    prefix_sum = [0]
+    for i in arr:
+        prefix_sum.append(prefix_sum[-1] + i)
+    sum_dict = &#123;&#125; # 存储前缀和第一次出现的位置
+    max_len = 0
+    i_max = 0
+    j_max = 0
+    # 先固定j，然后优化i
+    for j in range(len(arr) + 1):
+        n = prefix_sum[j] - k
+        if n in sum_dict:
+            i = sum_dict[n] # 最小的i
+            if j - i &gt; max_len:
+                max_len = j - i
+                i_max = i
+                j_max = j
+        if prefix_sum[j] not in sum_dict:
+            sum_dict[prefix_sum[j]] = j
+    return i_max, j_max
+
+
+class Solution:
+    def findLongestSubarray(self, array: List[str]) -&gt; List[str]:
+        arr = [1 if i.isalpha() else -1 for i in array]
+        i, j = find_longest_array_with_sum_k(arr, 0)
+        return array[i:j]
+</code></pre>  </body></html>
