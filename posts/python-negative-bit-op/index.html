@@ -1,0 +1,17 @@
+<!DOCTYPE html><html> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><!-- KaTeX --><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css" integrity="sha384-zh0CIslj+VczCZtlzBcjt5ppRcsAmDnRem7ESsYwWwg3m/OaJ2l4x7YBZl9Kxxib" crossorigin="anonymous"><!-- Prism --><link href="/lib/prism.css" rel="stylesheet"><script src="/lib/prism.js"></script><meta name="generator" content="Astro v5.1.7"><title></title><link rel="stylesheet" href="/_astro/index.CCeQH6Bz.css"></head> <body class="bg-[#333] text-[#ddd]"> <h1>Sustie</h1> <div class="flex gap-4"> <a href="/">主页</a> <a href="/posts/page/1">所有文章</a> <a href="/search/">文章检索</a> </div>  <h1>关于Python中负数的位运算</h1> <h2>引言</h2> <p>最近做了一道<a href="https://leetcode.cn/problems/convert-integer-lcci/">LeetCode题目</a>，题目本身不难，只需要将两个整数进行按位XOR操作，然后计算结果的二进制表示中1的个数即可。下面是我最初的实现：</p> <pre><code class="language-python">a = int(input())
+b = int(input())
+c = a ^ b
+n = 0
+while c:
+    n += c &amp; 1
+    c &gt;&gt;= 1
+print(n)
+</code></pre><p>但是这么做会超时，查看题解之后发现原因在于输入的整数有可能是负数，改正后的代码如下：</p> <pre><code class="language-python">a = int(input()) &amp; 0xFFFFFFFF
+b = int(input()) &amp; 0xFFFFFFFF
+c = a ^ b
+n = 0
+while c:
+    n += c &amp; 1
+    c &gt;&gt;= 1
+print(n)
+</code></pre><p>为什么最初的代码会超时？为什么需要将输入的整数与<code>0xFFFFFFFF</code>进行按位AND操作？这就涉及到Python中对负数进行位运算时，负数的表示方式。</p> <h2>Python中负数的二进制表示</h2> <p>我们知道，在计算机中，负数是以补码的形式存储的，对于一个整数<code>x</code>，其补码为<code>~x+1</code>。在Python中，整数是无限精度的，因此概念上一个整数是有无限多位的，这就导致负数在概念上前面会有无限多个1。举例来说，2的二进制表示为<code>...00010</code>，将其取反就得到<code>...11101</code>，再加1就得到<code>...11110</code>，这就是-2的二进制表示。可以看到，负数的二进制表示中前面有无限多个1。</p> <p>因此，对一个负数进行右移操作，最终一定会得到<code>...11111</code>，也就是-1，所以我最初的代码无法正确统计负数的二进制表示中1的个数。</p> <p>在实际实现中，负数到底有几个1取决于其占用的位数。由于题目已经告诉我们输入的整数类型为32位整数，因此我们需要将输入的整数与<code>0xFFFFFFFF</code>进行按位AND操作，去除掉前面多余的1，将其限制在32位范围内。</p>  </body></html>
